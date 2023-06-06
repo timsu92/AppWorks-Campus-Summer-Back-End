@@ -14,7 +14,7 @@ Refer to [User's Profile Update API](https://github.com/AppWorks-School-Material
 
 ### Build User's Picture Update API
 
-Refer to [User's Profile Update API](https://github.com/AppWorks-School-Materials/API-Doc/tree/master/Canchu#users-picture-update-api), build this API for front-end. 
+Refer to [User's Picture Update API](https://github.com/AppWorks-School-Materials/API-Doc/tree/master/Canchu#users-picture-update-api), build this API for front-end. 
 
 The front-end will send the image using the `multipart/form-data` format. The back-end needs to download the image and save it to the `static` folder, allowing the image to be accessed.
 
