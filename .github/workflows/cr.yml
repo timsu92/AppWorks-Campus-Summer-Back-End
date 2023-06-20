@@ -12,6 +12,7 @@ on:
 
 jobs:
   test:
+    if: ${{ github.event.pull_request.number == github.event.client_payload.pull_request_number }}
     # if: ${{ contains(github.event.*.labels.*.name, 'gpt review') }} # Optional; to run only when a label is attached
     runs-on: ubuntu-latest
     steps:
