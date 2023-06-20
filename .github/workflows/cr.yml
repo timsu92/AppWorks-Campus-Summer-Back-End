@@ -6,7 +6,7 @@ permissions:
 
 on:
   repository_dispatch:
-    types: code-review
+    types: ['code-review']
 
 jobs:
   test:
