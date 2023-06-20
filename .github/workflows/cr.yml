@@ -5,8 +5,8 @@ permissions:
   pull-requests: write
 
 on:
-  repository_dispatch:
-    types: code-review
+  pull_request:
+    types: [opened, reopened, synchronize]
 
 jobs:
   test:
