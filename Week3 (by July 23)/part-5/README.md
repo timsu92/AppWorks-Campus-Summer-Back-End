@@ -1,13 +1,12 @@
-# Week 3 Part 4
+# Week 3 Part 5
 
 ## Connected with the front-end
 
-### Your Frontend Website 
+### Friend's APIs.
 
-Get your own frontend website url from PJ.
+Integrate all friend-related APIs
 
-### User's APIs.
 
-Integrate all user-related APIs
+### Event's APIs.
 
-Note: To handle CORS-related issues, you can refer to this article: [URL](https://expressjs.com/en/resources/middleware/cors.html)
+Integrate all event-related APIs
