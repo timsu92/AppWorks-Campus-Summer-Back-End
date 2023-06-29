@@ -10,7 +10,8 @@ You can set smaller `N` for manual testing.
 
 You also need to think a reasonable way to test your rate limiter.
 
-## Advanced Optional
 
-1. There are many different kinds of rate limiters, look at each of them carefully and decide which one suit you best.
+## Discussion
+---- 
+1. Please explain the different approaches for rate limiting.
 2. What if the malicious user change his/her ip address all the time?

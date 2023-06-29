@@ -13,6 +13,28 @@ In the end, you will build two method for user authentication; while we can only
 
 Every time user sign in successfully, you should update and response a [JSON Web Tokens](https://jwt.io/introduction) to front-end.
 
+
+Note:
+
+I will use the following account for testing:
+step1: Sign up
+```
+{
+    "name": "user-{random 8 characters}",
+    "email": "user-{random 8 characters}@test.com",
+    "password": "test"
+}
+```
+step2: Sign in
+
+```
+{
+    "provider": "native",
+    "email": "user-{random 8 characters}@test.com",
+    "password": "test"
+}
+```
+
 ----
 ## Advance
 ### Integrate Facebook Login
@@ -31,3 +53,9 @@ Refer to [Facebook Graph API](https://developers.facebook.com/docs/graph-api) fo
 You can use any connection tools like `fetch` (NodeJS v18+), `axios`, `node-fetch`, `got`, ... to call Facebook Graph API.
 
 Note: `request` library was deprecated, do not use this one. (Since Feb 11th 2020)
+
+## Discussion
+----
+1. What is JWT?
+2. What are the purposes of cookies and sessions?
+3. What is OAuth 2.0?

@@ -28,6 +28,6 @@ It should not be possible to register with a duplicate email."
 ## Discussion
 ----
 1. What is the purpose of an access token?
-2. What is a refresh token?
+2. What is refresh token?
 3. How to encrypt sensitive user information?
-4. What is a REST API?
+4. How to handle the issue of user duplicate registrations?

@@ -19,3 +19,9 @@ Reference resources:
 
 ### Practice the 3A principle and complete specific API unit tests
 It is necessary to complete the HTTP endpoint unit test of Week 1 - Part 1, product related API, and achieve 100% coverage as much as possible.
+
+
+## Discussion
+---- 
+1. In testing, what are the differences between faking, mocking, and stubbing?
+2. What are the differences between unit testing, integration testing, and end-to-end testing?

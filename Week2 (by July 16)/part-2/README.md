@@ -17,3 +17,10 @@ This API has two functionalities:
 
 1. The person who invited someone to become a friend can withdraw the invitation.
 2. Both parties who have become friends can delete the friendship relationship.
+
+
+## Discussion
+----
+1. How should data be deleted? Will it be permanently deleted?
+2. What are the three major characteristics of OOP? How do you understand them?
+3. What are the SOLID principles? How would you explain and apply them individually?

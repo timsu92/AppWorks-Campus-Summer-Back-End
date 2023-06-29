@@ -14,3 +14,10 @@ Refer to [Friend Request API](https://github.com/AppWorks-School-Materials/API-D
 
 Refer to [Friend Pending API](https://github.com/AppWorks-School-Materials/API-Doc/tree/master/Canchu#friends-pending-api), build this API for front-end. The user who is invited to become a friend can use this API to identify who has invited them to be friends.
 
+
+## Discussion
+----
+1. How to design friendship's table? What are the advantages and disadvantages?
+2. What is ORM?
+3. What is database normalization? Why is normalization necessary?
+4. What are the purposes of Foreign Key and Index in a database?

@@ -74,3 +74,9 @@ Connect to MySQL server from command line interface on your instance. Create a d
 | title |  varchar(255)   | no   |         |                |
 
 From now on, **always keep a SQL database file in your project** exported by mysqldump tool.
+
+## Discussion
+----
+1. What is the purpose of Elastic IP?
+2. How can a program be run in the background?
+3. What should be taken into consideration when installing MySQL?

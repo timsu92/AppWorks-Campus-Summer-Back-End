@@ -15,3 +15,10 @@ Refer to [Post Update API](https://github.com/AppWorks-School-Materials/API-Doc/
 
 ### Build Post Create Comment API
 Refer to [Post Create Comment API](https://github.com/AppWorks-School-Materials/API-Doc/tree/master/Canchu#post-create-comment-api), build this API for front-end. Users can leave multiple comments on a single post.
+
+
+## Discussion
+----
+1. How to improve code quality?
+2. How to track the count of likes? How to store this data?
+3. How to design nested comments?

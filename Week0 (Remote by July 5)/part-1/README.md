@@ -14,7 +14,7 @@
 
 ## Before assignment
 
-From now on, we're going to start the project `STYLiSH`.
+From now on, we're going to start the project `Canchu`.
 
 1. Fork this repository in AppWorks School account to your GitHub account.
 2. You will get a `forked repository` in your GitHub account.
@@ -37,8 +37,8 @@ Ex: For week 1 part 3
   => week_1_part_3
 ```
 
-1. Find a subfolder named **Stylish** under the **students/[your_name]** folder.
-2. Modify **README.md** file, write down **your name** in this file and practice more markdown language.
+1. Find a subfolder named **Canchu** under the **students/[your_name]** folder.
+2. Create and modify **README.md** file, write down **your name** in this file and practice more markdown language.
 3. Make your first commit for the changes using git.
 4. Push **current assignment branch** to `your forked repository`.
 
@@ -62,3 +62,11 @@ Please fix the issues and push new commits to the same assignment branch. The pu
 ### Sample PR
 
 ![github com_AppWorks-School_Front-End-Class-Batch16_pull_121 (4)](https://user-images.githubusercontent.com/11663276/173797630-58573dba-d62b-40ea-905e-ea3331e96f59.png)
+
+
+
+## Discussion
+----
+1. What is git flow?
+2. What is the purpose of git branch?
+3. How to have a good commit message?

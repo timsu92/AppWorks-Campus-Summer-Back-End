@@ -15,3 +15,10 @@ Refer to [Get Event API](https://github.com/AppWorks-School-Materials/API-Doc/tr
 
 ### Build Read Events API
 Refer to [Read Event API](https://github.com/AppWorks-School-Materials/API-Doc/tree/master/Canchu#read-event-api), build this API for front-end. Users can mark unread events as read by using the event's id.
+
+
+## Discussion
+----
+1. How would you maintain an existing legacy codebase?
+2. How should the methods of RESTful be used? How should endpoints be named?
+3. What is the N+1 Problem in a database?
