@@ -21,4 +21,4 @@ Refer to [Read Event API](https://github.com/AppWorks-School-Materials/API-Doc/t
 ----
 1. How would you maintain an existing legacy codebase?
 2. How should the methods of RESTful be used? How should endpoints be named?
-3. What is the N+1 Problem in a database?
+3. What is the N+1 query problem in a database?

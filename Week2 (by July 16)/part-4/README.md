@@ -15,3 +15,4 @@ Note: No pagination is required here. Pagination exercises will be covered in la
 1. What are the differences between Inner Join, Outer Join, Left Join, and Right Join?
 2. Why is it not recommended to use select *?
 3. What is SQL Injection? How can it be prevented?
+4. How to do pagination?
