@@ -2,10 +2,10 @@
   "name": "canchu",
   "version": "1.0.0",
   "description": "simple social media website",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "npx tsc && node dist/index.js"
+    "serve": "rm -rf dist && npx tsc && node dist/src/index.js"
   },
   "author": "timsu92",
   "license": "ISC",
