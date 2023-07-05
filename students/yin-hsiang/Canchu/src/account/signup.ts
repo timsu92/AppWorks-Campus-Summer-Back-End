@@ -8,7 +8,7 @@ export default function(req: express.Request, res: express.Response, next: expre
 
   const bodySchema = z.object({
     name: z.string(),
-    email: z.string(),
+    email: z.string().email(),
     password: z.string(),
   });
 
