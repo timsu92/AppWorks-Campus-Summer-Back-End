@@ -4,6 +4,7 @@ import mysql from 'mysql2';
 import assert from "assert";
 
 /// <reference path="../util/types/apiResponse.d.ts" />
+import * as jwt from "./jwt.js";
 
 export default function (sql: mysql.Connection) {
   return function (req: express.Request, res: express.Response, next: express.NextFunction): void {
@@ -37,11 +38,11 @@ export default function (sql: mysql.Connection) {
                 } else if (result.affectedRows === 1) {
                   sql.query('SELECT id,provider,email,name,picture FROM user WHERE id = ?',
                     [result.insertId],
-                    function (err, result, fields) {
+                    async function (err, result, fields) {
                       assert(err === null);
-                      const usrObj = result as unknown as Canchu.Api.Res.IUserObject[];
+                      const usrObj = result as unknown as ({[key: string]: any} & Canchu.Api.Res.IUserObject)[];
                       res.status(200).send({
-                        "access_token": "",
+                        "access_token": await jwt.encode(usrObj[0]),
                         "user": usrObj[0]
                       });
                       console.log("registered ", usrObj[0]);
