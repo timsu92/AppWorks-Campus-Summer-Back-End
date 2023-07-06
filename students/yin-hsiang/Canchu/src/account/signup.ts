@@ -38,6 +38,7 @@ export default function (sql: mysql.Connection) {
               [parsedReq.data.name, parsedReq.data.email, await bcrypt.hash(parsedReq.data.password, saltRounds)],
               function (err, result: mysql.ProcedureCallPacket<mysql.ResultSetHeader>, fields) {
                 if (err) {
+                  // ex result: Duplicate entry 'test@test.com' for key 'user.email'
                   res.status(403).send({ error: `${parsedReq.data.email} already registered` });
                 } else if (result.affectedRows === 1) {
                   sql.query('SELECT id,provider,email,name,picture FROM user WHERE id = ?',
