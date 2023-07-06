@@ -2,8 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mysql from 'mysql2';
 
-import env from '../.env.json';
-import signup from './account/signup';
+import env from '../.env.json' assert { type: "json" };
+import signup from './account/signup.js';
 
 const app = express();
 app.use(bodyParser.json());
