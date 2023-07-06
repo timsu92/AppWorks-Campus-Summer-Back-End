@@ -15,7 +15,7 @@ app.get('/', function (req, res) {
   res.send("Hello friend from the other side!");
 })
 
-app.post('/users/signup', signup(sql));
+app.post('/api/1.0/users/signup', signup(sql));
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
