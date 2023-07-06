@@ -27,7 +27,7 @@ export default function (sql: mysql.Connection) {
       sql.query("SELECT email FROM user WHERE email = ?", [parsedReq.data.email], async function (err, result, fields) {
         if (err) {
           console.warn(`sql query error on 'SELECT email FROM user WHERE email = ${parsedReq.data.email}'`, err);
-          res.status(500).send("sql error");
+          res.status(500).send({ error: "sql error" });
         } else {
           const emails = result as { email: string }[];
           if (emails.length > 0) {
