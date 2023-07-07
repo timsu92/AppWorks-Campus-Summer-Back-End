@@ -17,9 +17,9 @@ export default function (sql: mysql.Connection) {
     }
 
     const bodySchema = z.object({
-      name: z.string(),
-      email: z.string().email(),
-      password: z.string(),
+      name: z.string().nonempty(),
+      email: z.string().nonempty().email(),
+      password: z.string().nonempty(),
     });
 
     const parsedReq = bodySchema.safeParse(req.body);
