@@ -62,7 +62,11 @@ export default function (sql: mysql.Connection) {
         res.status(500).send({ "error": "login from facebook not supported" });
       }
     } else if (parsedBody.error.issues.find(issue => issue.path[0] === "provider")) {
-      res.status(403).send({ "error": "Wrong provider" });
+      if (typeof req.body.provider === "string" && req.body.provider !== "") {
+        res.status(403).send({ "error": "Wrong provider" });
+      } else {
+        res.status(400).send({ "error": "invalid provider" });
+      }
     } else {
       res.status(400).send({ "error": parsedBody.error.message });
     }
