@@ -36,7 +36,7 @@ export default function (sql: mysql.Connection | mysql.Pool) {
               res.status(500).send({ "error": "internal database error" });
               console.error(`error while sql executing 'SELECT id,provider,email,name,picture FROM user WHERE email=${parsedData.email}'`, err);
             } else {
-              let usrObj = result as (Canchu.Api.Res.IUserObject & { "password": string })[];
+              let usrObj = result as (Canchu.IUserObject & { "password": string })[];
               if (usrObj.length === 0) {
                 res.status(403).send({ "error": "User Not Found" });
               } else if (await bcrypt.compare(parsedData.password, usrObj[0].password)) {
@@ -44,7 +44,7 @@ export default function (sql: mysql.Connection | mysql.Pool) {
                 delete usrObj[0].password
                 res.status(200).send({
                   "data": {
-                    "access_token": await jwt.encode(usrObj[0] as Canchu.Api.Res.IUserObject & { [key: string]: any }),
+                    "access_token": await jwt.encode(usrObj[0] as Canchu.IUserObject & { [key: string]: any }),
                     "user": usrObj[0]
                   }
                 });

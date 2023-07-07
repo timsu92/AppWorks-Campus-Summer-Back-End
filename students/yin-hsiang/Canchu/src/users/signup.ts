@@ -46,7 +46,7 @@ export default function (sql: mysql.Connection | mysql.Pool) {
                     async function (err, result, fields) {
                       assert(err === null);
                       // {[key: string]: any}只是為了滿足型態檢查，實際上不會沒事接受任意key
-                      const usrObj = result as unknown as ({ [key: string]: any } & Canchu.Api.Res.IUserObject)[];
+                      const usrObj = result as unknown as ({ [key: string]: any } & Canchu.IUserObject)[];
                       res.status(200).send({
                         "data": {
                           "access_token": await jwt.encode(usrObj[0]),
