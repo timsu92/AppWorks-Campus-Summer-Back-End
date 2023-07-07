@@ -48,8 +48,10 @@ export default function (sql: mysql.Connection) {
                       // {[key: string]: any}只是為了滿足型態檢查，實際上不會沒事接受任意key
                       const usrObj = result as unknown as ({[key: string]: any} & Canchu.Api.Res.IUserObject)[];
                       res.status(200).send({
-                        "access_token": await jwt.encode(usrObj[0]),
-                        "user": usrObj[0]
+                        "data": {
+                          "access_token": await jwt.encode(usrObj[0]),
+                          "user": usrObj[0]
+                        }
                       });
                       console.log("registered ", usrObj[0]);
                     });
