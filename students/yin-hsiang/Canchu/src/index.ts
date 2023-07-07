@@ -9,8 +9,7 @@ import signin from './account/signin.js';
 const app = express();
 app.use(bodyParser.json());
 const port = 3000;
-const sql = mysql.createConnection(env.sqlOp);
-sql.connect();
+const sql = mysql.createPool(env.sqlCfg);
 
 app.get('/', function (req, res) {
   res.send("Hello friend from the other side!");

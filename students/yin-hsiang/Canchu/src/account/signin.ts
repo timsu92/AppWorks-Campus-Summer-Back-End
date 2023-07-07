@@ -10,7 +10,7 @@ import * as jwt from "./jwt.js";
 
 const saltRounds = 10;
 
-export default function (sql: mysql.Connection) {
+export default function (sql: mysql.Connection | mysql.Pool) {
   return function (req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (req.headers["content-type"] !== "application/json") {
       res.status(400).send({ error: "invalid content type" });
