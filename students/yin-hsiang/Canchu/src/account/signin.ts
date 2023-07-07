@@ -1,5 +1,3 @@
-import assert from "assert";
-
 import express from "express";
 import z from "zod";
 import mysql from 'mysql2';
@@ -7,8 +5,6 @@ import bcrypt from 'bcrypt';
 
 /// <reference path="../util/types/apiResponse.d.ts" />
 import * as jwt from "./jwt.js";
-
-const saltRounds = 10;
 
 export default function (sql: mysql.Connection | mysql.Pool) {
   return function (req: express.Request, res: express.Response, next: express.NextFunction): void {
