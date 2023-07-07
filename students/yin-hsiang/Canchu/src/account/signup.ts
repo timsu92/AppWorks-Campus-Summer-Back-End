@@ -34,7 +34,7 @@ export default function (sql: mysql.Connection) {
             console.log(`trying to register duplicated ${parsedReq.data.email}`);
             res.status(403).send({ error: `${parsedReq.data.email} already registered` });
           } else {
-            sql.query("INSERT INTO user (provider, name, email, picture, password) VALUES ('', ?, ?, '', ?)",
+            sql.query("INSERT INTO user (provider, name, email, picture, password) VALUES ('native', ?, ?, '', ?)",
               [parsedReq.data.name, parsedReq.data.email, await bcrypt.hash(parsedReq.data.password, saltRounds)],
               function (err, result: mysql.ProcedureCallPacket<mysql.ResultSetHeader>, fields) {
                 if (err) {
