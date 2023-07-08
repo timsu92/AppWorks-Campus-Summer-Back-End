@@ -3,7 +3,6 @@ import z from "zod";
 import mysql from 'mysql2';
 import bcrypt from 'bcrypt';
 
-/// <reference path="../util/types/apiResponse.d.ts" />
 import * as jwt from "./jwt.js";
 
 export default function (sql: mysql.Connection | mysql.Pool) {
@@ -29,23 +28,36 @@ export default function (sql: mysql.Connection | mysql.Pool) {
       // TODO: 暫時先略過facebook登入 <07-07-23, timsu92> //
       if (parsedBody.data.provider === "native") {
         const parsedData = parsedBody.data;
-        sql.query("SELECT id,provider,email,name,picture,password FROM user WHERE email=?",
+        sql.query("SELECT id,name,picture,password,introduction,tags FROM user WHERE email=?",
           [parsedData.email],
           async function (err, result, fields) {
             if (err) {
               res.status(500).send({ "error": "internal database error" });
-              console.error(`error while sql executing 'SELECT id,provider,email,name,picture FROM user WHERE email=${parsedData.email}'`, err);
+              console.error(`error while sql executing 'SELECT id,name,picture,password,introduction,tags FROM user WHERE email=${parsedData.email}'\n`, err);
             } else {
-              let usrObj = result as (Canchu.IUserObject & { "password": string })[];
-              if (usrObj.length === 0) {
+              let qryResult = result as {
+                id: number,
+                name: string,
+                picture: string,
+                password: string,
+                introduction: string,
+                tags: string
+              }[];
+              if (qryResult.length === 0) {
                 res.status(403).send({ "error": "User Not Found" });
-              } else if (await bcrypt.compare(parsedData.password, usrObj[0].password)) {
-                // @ts-expect-error
-                delete usrObj[0].password
+              } else if (await bcrypt.compare(parsedData.password, qryResult[0].password)) {
                 res.status(200).send({
                   "data": {
-                    "access_token": await jwt.encode(usrObj[0] as Canchu.IUserObject & { [key: string]: any }),
-                    "user": usrObj[0]
+                    "access_token": await jwt.encode({
+                      "id": qryResult[0].id,
+                      "name": qryResult[0].name,
+                      "picture": qryResult[0].picture,
+                      "friend_count": 0, // skip first
+                      "introduction": qryResult[0].introduction,
+                      "tags": qryResult[0].tags,
+                      "friendship": null // skip first
+                    } as Canchu.IUserDetailObject & { [key: string]: any }),
+                    "user": qryResult[0]
                   }
                 });
               } else {

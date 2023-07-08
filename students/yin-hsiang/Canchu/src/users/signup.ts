@@ -1,5 +1,3 @@
-import assert from "assert";
-
 import express from "express";
 import z from "zod";
 import mysql from 'mysql2';
@@ -41,21 +39,29 @@ export default function (sql: mysql.Connection | mysql.Pool) {
                   // ex result: Duplicate entry 'test@test.com' for key 'user.email'
                   res.status(403).send({ error: `${parsedReq.data.email} already registered` });
                 } else if (result.affectedRows === 1) {
-                  const usrObj: Canchu.IUserObject = {
+                  const usrDetailObj: Canchu.IUserDetailObject = {
                     "id": result.insertId,
                     "name": parsedReq.data.name,
-                    "email": parsedReq.data.email,
                     "picture": "",
-                    "provider": "native"
+                    "friend_count": 0, // skip first
+                    "introduction": '',
+                    "tags": "",
+                    "friendship": null // skip first
                   };
                   res.status(200).send({
                     "data":{
                       // {[key: string]: any}只是為了滿足型態檢查，實際上不會沒事接受任意key
-                      "access_token": await jwt.encode(usrObj as Canchu.IUserObject & {[key: string]: any}),
-                      "user": usrObj
+                      "access_token": await jwt.encode(usrDetailObj as Canchu.IUserDetailObject & {[key: string]: any}),
+                      "user": {
+                        "id": usrDetailObj.id,
+                        "provider": "native",
+                        "email": parsedReq.data.email,
+                        "name": usrDetailObj.name,
+                        "picture": usrDetailObj.picture
+                      } as Canchu.IUserObject
                     }
                   });
-                  console.log("registered ", usrObj);
+                  console.log("registered ", usrDetailObj);
                 }
               });
           }

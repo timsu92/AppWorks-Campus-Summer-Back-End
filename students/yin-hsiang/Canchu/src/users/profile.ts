@@ -15,12 +15,19 @@ type oError = {
   "error": string
 }
 
-const zUserObject = z.object({
+const zFriendshipObject = z.object({
+  "id": z.number(),
+  "status": z.enum(["pending", "requested", "friend"])
+})
+
+const zUserDetailObject = z.object({
   "id": z.number().int(),
-  "provider": z.enum(["native", "facebook"]),
-  "email": z.string().email(),
   "name": z.string().nonempty(),
-  "picture": z.string()
+  "picture": z.string(),
+  "friend_count": z.number().nonnegative(),
+  "introduction": z.string(),
+  "tags": z.string(),
+  "friendship": zFriendshipObject.or(z.null())
 });
 
 export default function (sql: mysql.Connection | mysql.Pool) {
@@ -35,21 +42,13 @@ export default function (sql: mysql.Connection | mysql.Pool) {
       return;
     }
     try {
-      const usrObj = (await jwt.decode(access_token)).payload as Canchu.IUserObject & jose.JWTPayload;
-      if (!zUserObject.safeParse(usrObj).success) {
+      const usrDetailObj = (await jwt.decode(access_token)).payload as Canchu.IUserDetailObject & jose.JWTPayload;
+      if (!zUserDetailObject.safeParse(usrDetailObj).success) {
         res.status(403).send({ "error": "Wrong token" });
       } else {
         res.status(200).send({
           "data": {
-            "user": {
-              "id": usrObj.id,
-              "name": usrObj.name,
-              "picture": usrObj.picture,
-              "friend_count": 0, // skip first
-              "introduction": "",
-              "tags": "",
-              "friendship": null // skip first
-            }
+            "user": usrDetailObj
           }
         });
       }
