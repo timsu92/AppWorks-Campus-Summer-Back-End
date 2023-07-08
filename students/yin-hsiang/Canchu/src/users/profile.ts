@@ -1,5 +1,3 @@
-import assert from 'assert';
-
 import express from 'express';
 import mysql from 'mysql2';
 import z from 'zod';
@@ -31,7 +29,7 @@ export default function (sql: mysql.Connection | mysql.Pool) {
       res.status(400).send({ "error": "invalid id" });
       return;
     }
-    const access_token = (req.headers["authorization"] ?? "").match(/(?<=Bearer ).+/)?.[0];
+    const access_token = (req.headers["authorization"] ?? "").match(/(?<=^Bearer ).+/)?.[0];
     if (access_token === undefined) {
       res.status(401).send({ "error": "No token" });
       return;
