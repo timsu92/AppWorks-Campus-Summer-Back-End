@@ -16,7 +16,7 @@ type oError = {
   "error": string
 }
 
-export default function (sql: mysql.Connection | mysql.Pool) {
+export function getUserProfile (sql: mysql.Connection | mysql.Pool) {
   return async function (req: express.Request, res: express.Response<oSuccess | oError>, next: express.NextFunction): Promise<void> {
     if (Number.isNaN(+req.params.id)) {
       res.status(400).send({ "error": "invalid id" });
