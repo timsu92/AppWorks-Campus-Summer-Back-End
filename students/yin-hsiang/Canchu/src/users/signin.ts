@@ -68,7 +68,13 @@ export default function (sql: mysql.Connection | mysql.Pool) {
                       "tags": qryResult[0].tags,
                       "friendship": null // skip first
                     } as Canchu.IUserDetailObject & { [key: string]: any }),
-                    "user": qryResult[0]
+                    "user": {
+                      "id": qryResult[0].id,
+                      "provider": parsedData.provider,
+                      "name": qryResult[0].name,
+                      "email": parsedData.email,
+                      "picture": qryResult[0].picture
+                    }
                   }
                 });
               } else {
