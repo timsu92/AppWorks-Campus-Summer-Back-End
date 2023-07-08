@@ -5,8 +5,19 @@ import bcrypt from 'bcrypt';
 
 import * as jwt from "./jwt.js";
 
+type oSuccess = {
+  "data": {
+    "access_token": string,
+    "user": Canchu.IUserObject
+  }
+}
+
+type oError = {
+  "error": string
+}
+
 export default function (sql: mysql.Connection | mysql.Pool) {
-  return function (req: express.Request, res: express.Response, next: express.NextFunction): void {
+  return function (req: express.Request, res: express.Response<oSuccess | oError>, next: express.NextFunction): void {
     if (req.headers["content-type"] !== "application/json") {
       res.status(400).send({ error: "invalid content type" });
     }
