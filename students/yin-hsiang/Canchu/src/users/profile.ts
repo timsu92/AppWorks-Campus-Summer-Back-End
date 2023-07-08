@@ -3,6 +3,7 @@ import mysql from 'mysql2';
 import z from 'zod';
 import jose from 'jose';
 
+import { CanchuZod } from '../util/types/api.js';
 import * as jwt from './jwt.js';
 
 type oSuccess = {
@@ -14,21 +15,6 @@ type oSuccess = {
 type oError = {
   "error": string
 }
-
-const zFriendshipObject = z.object({
-  "id": z.number(),
-  "status": z.enum(["pending", "requested", "friend"])
-})
-
-const zUserDetailObject = z.object({
-  "id": z.number().int(),
-  "name": z.string().nonempty(),
-  "picture": z.string(),
-  "friend_count": z.number().nonnegative(),
-  "introduction": z.string(),
-  "tags": z.string(),
-  "friendship": zFriendshipObject.or(z.null())
-});
 
 export default function (sql: mysql.Connection | mysql.Pool) {
   return async function (req: express.Request, res: express.Response<oSuccess | oError>, next: express.NextFunction): Promise<void> {
@@ -43,7 +29,7 @@ export default function (sql: mysql.Connection | mysql.Pool) {
     }
     try {
       const usrDetailObj = (await jwt.decode(access_token)).payload as Canchu.IUserDetailObject & jose.JWTPayload;
-      if (!zUserDetailObject.safeParse(usrDetailObj).success) {
+      if (!CanchuZod.UserDetailObject.safeParse(usrDetailObj).success) {
         res.status(403).send({ "error": "Wrong token" });
       } else {
         res.status(200).send({
