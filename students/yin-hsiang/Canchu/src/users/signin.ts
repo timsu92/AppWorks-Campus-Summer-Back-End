@@ -77,6 +77,7 @@ export default function (sql: mysql.Connection | mysql.Pool) {
                     }
                   }
                 });
+                next();
               } else {
                 res.status(403).send({ "error": "Wrong Password" });
               }

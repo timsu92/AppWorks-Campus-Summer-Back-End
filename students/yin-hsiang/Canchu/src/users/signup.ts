@@ -73,6 +73,7 @@ export default function (sql: mysql.Connection | mysql.Pool) {
                     }
                   });
                   console.log("registered ", usrDetailObj);
+                  next();
                 }
               });
           }

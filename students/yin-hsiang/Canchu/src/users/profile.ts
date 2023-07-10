@@ -37,6 +37,7 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
             "user": usrDetailObj
           }
         });
+        next();
       }
     } catch (err) {
       res.status(403).send({ "error": "Can't parse token" });
@@ -101,6 +102,7 @@ export function updateUserProfile(sql: mysql.Connection | mysql.Pool) {
         } else {
           res.status(200).send({ "data": { "user": { "id": usrDetailObj.data.id } } });
           console.log(`user with id ${usrDetailObj.data.id} changed profile to ${body.data}`);
+          next();
         }
       })
   }
