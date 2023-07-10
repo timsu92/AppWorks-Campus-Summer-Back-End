@@ -73,34 +73,35 @@ export function updateUserProfile(sql: mysql.Connection | mysql.Pool) {
       res.status(401).send({ "error": "No token" });
       return;
     }
+    let payload;
     try {
-      const usrDetailObj = CanchuZod.UserDetailObject.safeParse(
-        (await jwt.decode(access_token)).payload
-      );
-      if (!usrDetailObj.success) {
-        res.status(403).send({ "error": "invalid token format" });
-        return;
-      }
-      const body = iBodyZ.safeParse(req.body);
-      if (!body.success) {
-        res.status(400).send({ "error": body.error.message });
-        return;
-      }
-      sql.query("UPDATE user SET name=?, introduction=?, tags=? WHERE id=?",
-        [body.data.name, body.data.introduction, body.data.tags, usrDetailObj.data.id],
-        function (err, result: mysql.ProcedureCallPacket<mysql.ResultSetHeader>) {
-          if (err) {
-            res.status(500).send({ "error": "internal database error" });
-            console.error(`error while executing 'UPDATE user SET name=${body.data.name}, introduction=${body.data.introduction}, tags=${body.data.tags} WHERE id=${usrDetailObj.data.id}'\n`, err);
-          } else if (result.affectedRows === 0) {
-            res.status(403).send({ "error": "Wrong token" });
-          } else {
-            res.status(200).send({ "data": { "user": { "id": usrDetailObj.data.id } } });
-            console.log(`user with id ${usrDetailObj.data.id} changed profile to ${body.data}`);
-          }
-        })
+      payload = (await jwt.decode(access_token)).payload;
     } catch (err) {
       res.status(403).send({ "error": "Can't parse token" });
+      return;
     }
+    const usrDetailObj = CanchuZod.UserDetailObject.safeParse(payload);
+    if (!usrDetailObj.success) {
+      res.status(403).send({ "error": "invalid token format" });
+      return;
+    }
+    const body = iBodyZ.safeParse(req.body);
+    if (!body.success) {
+      res.status(400).send({ "error": body.error.message });
+      return;
+    }
+    sql.query("UPDATE user SET name=?, introduction=?, tags=? WHERE id=?",
+      [body.data.name, body.data.introduction, body.data.tags, usrDetailObj.data.id],
+      function (err, result: mysql.ProcedureCallPacket<mysql.ResultSetHeader>) {
+        if (err) {
+          res.status(500).send({ "error": "internal database error" });
+          console.error(`error while executing 'UPDATE user SET name=${body.data.name}, introduction=${body.data.introduction}, tags=${body.data.tags} WHERE id=${usrDetailObj.data.id}'\n`, err);
+        } else if (result.affectedRows === 0) {
+          res.status(403).send({ "error": "Wrong token" });
+        } else {
+          res.status(200).send({ "data": { "user": { "id": usrDetailObj.data.id } } });
+          console.log(`user with id ${usrDetailObj.data.id} changed profile to ${body.data}`);
+        }
+      })
   }
 }
