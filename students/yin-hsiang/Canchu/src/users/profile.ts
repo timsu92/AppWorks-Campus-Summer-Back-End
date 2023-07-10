@@ -31,7 +31,7 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
       if (!z.number().nonnegative().int().safeParse(payload.id).success) {
         res.status(403).send({ "error": "Wrong token" });
       } else {
-        sql.query("SELECT id,name,picture,friend_count,introduction,tags,friendship FROM user WHERE id=?",
+        sql.query("SELECT id FROM user WHERE id=?",
           [payload.id],
           function (err, result, fields) {
             if (err) {
@@ -39,16 +39,33 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
               console.error(`error while executing SELECT id,name,picture,friend_count,introduction,tags,friendship FROM user WHERE id=${payload.id}`);
               return;
             }
-            const qryResult = result as Canchu.IUserDetailObject[];
+            const qryResult = result as {"id": number}[];
             if(qryResult.length !== 1){
               res.status(403).send({"error": "invalid token"});
               return;
             }
-            res.status(200).send({
-              "data": {
-                "user": qryResult[0]
+            sql.query("SELECT id,name,picture,friend_count,introduction,tags,friendship FROM user WHERE id=?",
+              [req.params.id],
+              function (err, result, fields) {
+                if (err) {
+                  res.status(500).send({ "error": "internal database error" });
+                  console.error(`error while executing "SELECT id,name,picture,introduction,tags FROM user WHERE id=${req.params.id}"`);
+                  return;
+                }
+                const usrDetailObjs = (result as Canchu.IUserDetailObject[]).map(fakeObj => {
+                  return {
+                    ...fakeObj,
+                    "friend_count": 0,
+                    "friendship": null
+                  }
+                });
+                if (usrDetailObjs.length !== 1) {
+                  res.status(404).send({ "error": "user not found" });
+                  return;
+                }
+                res.status(200).send({ "data": { "user": usrDetailObjs[0] } });
               }
-            });
+            )
           })
         next();
       }
