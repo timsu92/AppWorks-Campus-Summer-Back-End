@@ -17,12 +17,12 @@ app.get('/', function (req, res) {
   res.send("Hello friend from the other side!");
 })
 
-app.post('/api/1.0/users/signup', signup(sql));
-app.post('/api/1.0/users/signin', signin(sql));
-app.get('/api/1.0/users/:id/profile', getUserProfile(sql));
-app.put('/api/1.0/users/profile', updateUserProfile(sql));
+app.post(`/api/${env.apiVer}/users/signup`, signup(sql));
+app.post(`/api/${env.apiVer}/users/signin`, signin(sql));
+app.get(`/api/${env.apiVer}/users/:id/profile`, getUserProfile(sql));
+app.put(`/api/${env.apiVer}/users/profile`, updateUserProfile(sql));
 app.use('/images', express.static('static/avatar'));
-app.put('/api/1.0/users/picture', changePicture(sql));
+app.put(`/api/${env.apiVer}/users/picture`, changePicture(sql));
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
