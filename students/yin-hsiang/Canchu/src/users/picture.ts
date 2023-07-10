@@ -17,8 +17,8 @@ export default function (sql: mysql.Connection | mysql.Pool) {
     "error": string
   }
 
-  // get image from field "picture" of body and save them to static folder
-  const uploader = multer({ dest: 'static/' }).single('picture');
+  // get image from field "picture" of body and save them to static/avatar folder
+  const uploader = multer({ dest: 'static/avatar' }).single('picture');
 
   return async function (req: express.Request, res: express.Response<oSuccess | oError>, next: express.NextFunction) {
     if (req.headers["content-type"] === undefined || !req.headers["content-type"].startsWith("multipart/form-data")) {
