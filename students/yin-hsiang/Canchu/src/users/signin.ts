@@ -46,7 +46,7 @@ export default function (sql: mysql.Connection | mysql.Pool) {
               res.status(500).send({ "error": "internal database error" });
               console.error(`error while sql executing 'SELECT id,provider,email,name,picture,password FROM user WHERE email=${parsedData.email}'\n`, err);
             } else {
-              let usrObj = result as (Canchu.IUserObject & {"password": string})[];
+              let usrObj = result as (Canchu.IUserObject & { "password": string })[];
               if (usrObj.length === 0) {
                 res.status(403).send({ "error": "User Not Found" });
               } else if (await bcrypt.compare(parsedData.password, usrObj[0].password)) {

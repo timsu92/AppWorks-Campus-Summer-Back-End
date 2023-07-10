@@ -44,7 +44,7 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
               res.status(403).send({"error": "invalid token"});
               return;
             }
-            sql.query("SELECT id,name,picture,friend_count,introduction,tags,friendship FROM user WHERE id=?",
+            sql.query("SELECT id,name,picture,introduction,tags FROM user WHERE id=?",
               [req.params.id],
               function (err, result, fields) {
                 if (err) {
