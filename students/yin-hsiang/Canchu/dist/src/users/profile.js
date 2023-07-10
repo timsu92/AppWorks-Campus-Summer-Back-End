@@ -46,9 +46,9 @@ export function getUserProfile(sql) {
                             return;
                         }
                         res.status(200).send({ "data": { "user": usrDetailObjs[0] } });
+                        next();
                     });
                 });
-                next();
             }
         }
         catch (err) {
