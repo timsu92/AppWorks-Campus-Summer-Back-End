@@ -54,11 +54,22 @@ export default function (sql: mysql.Connection | mysql.Pool) {
         }
         return;
       }
-      if (req.file) {
-        res.status(200).send({ "data": { "picture": `http://${env.sqlCfg.host}/images/${req.file.filename}` } });
-        next();
-      } else {
+      if (!req.file) {
         res.status(400).send({ "error": "did not upload file correctly" });
+      } else {
+        const file = req.file;
+        sql.query("UPDATE user SET picture=? WHERE id=?",
+          [`images/${file.filename}`, usrDetailObj.data.id],
+          function (err, result: mysql.ProcedureCallPacket<mysql.ResultSetHeader>, fields) {
+            if (err) {
+              res.status(500).send({ "error": "internal database error" });
+            } else if (result.affectedRows === 0) {
+              res.status(403).send({ "error": "invalid token id" });
+            } else {
+              res.status(200).send({ "data": { "picture": `http://${env.sqlCfg.host}/images/${file.filename}` } });
+              next();
+            }
+          })
       }
     })
   }
