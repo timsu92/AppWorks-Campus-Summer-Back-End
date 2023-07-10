@@ -64,10 +64,10 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
                   return;
                 }
                 res.status(200).send({ "data": { "user": usrDetailObjs[0] } });
+                next();
               }
             )
           })
-        next();
       }
     } catch (err) {
       res.status(403).send({ "error": "Can't parse token" });
