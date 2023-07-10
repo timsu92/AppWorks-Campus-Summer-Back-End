@@ -28,7 +28,7 @@ export function getUserProfile(sql) {
                         res.status(403).send({ "error": "invalid token" });
                         return;
                     }
-                    sql.query("SELECT id,name,picture,friend_count,introduction,tags,friendship FROM user WHERE id=?", [req.params.id], function (err, result, fields) {
+                    sql.query("SELECT id,name,picture,introduction,tags FROM user WHERE id=?", [req.params.id], function (err, result, fields) {
                         if (err) {
                             res.status(500).send({ "error": "internal database error" });
                             console.error(`error while executing "SELECT id,name,picture,introduction,tags FROM user WHERE id=${req.params.id}"`);
