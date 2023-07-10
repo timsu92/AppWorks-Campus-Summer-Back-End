@@ -59,15 +59,7 @@ export default function (sql: mysql.Connection | mysql.Pool) {
               } else if (await bcrypt.compare(parsedData.password, qryResult[0].password)) {
                 res.status(200).send({
                   "data": {
-                    "access_token": await jwt.encode({
-                      "id": qryResult[0].id,
-                      "name": qryResult[0].name,
-                      "picture": qryResult[0].picture,
-                      "friend_count": 0, // skip first
-                      "introduction": qryResult[0].introduction,
-                      "tags": qryResult[0].tags,
-                      "friendship": null // skip first
-                    } as Canchu.IUserDetailObject & { [key: string]: any }),
+                    "access_token": await jwt.encode({ "id": qryResult[0].id }),
                     "user": {
                       "id": qryResult[0].id,
                       "provider": parsedData.provider,

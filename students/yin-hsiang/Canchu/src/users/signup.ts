@@ -62,7 +62,7 @@ export default function (sql: mysql.Connection | mysql.Pool) {
                   res.status(200).send({
                     "data":{
                       // {[key: string]: any}只是為了滿足型態檢查，實際上不會沒事接受任意key
-                      "access_token": await jwt.encode(usrDetailObj as Canchu.IUserDetailObject & {[key: string]: any}),
+                      "access_token": await jwt.encode({ "id": usrDetailObj.id }),
                       "user": {
                         "id": usrDetailObj.id,
                         "provider": "native",

@@ -3,7 +3,6 @@ import mysql from 'mysql2';
 import jose from 'jose';
 import z from "zod";
 
-import { CanchuZod } from '../util/types/api.js';
 import * as jwt from './jwt.js';
 
 export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
@@ -28,15 +27,29 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
       return;
     }
     try {
-      const usrDetailObj = (await jwt.decode(access_token)).payload as Canchu.IUserDetailObject & jose.JWTPayload;
-      if (!CanchuZod.UserDetailObject.safeParse(usrDetailObj).success) {
+      const payload = (await jwt.decode(access_token)).payload as { "id": number } & jose.JWTPayload;
+      if (!z.number().nonnegative().int().safeParse(payload.id).success) {
         res.status(403).send({ "error": "Wrong token" });
       } else {
-        res.status(200).send({
-          "data": {
-            "user": usrDetailObj
-          }
-        });
+        sql.query("SELECT id,name,picture,friend_count,introduction,tags,friendship FROM user WHERE id=?",
+          [payload.id],
+          function (err, result, fields) {
+            if (err) {
+              res.status(500).send({ "error": "internal database error" });
+              console.error(`error while executing SELECT id,name,picture,friend_count,introduction,tags,friendship FROM user WHERE id=${payload.id}`);
+              return;
+            }
+            const qryResult = result as Canchu.IUserDetailObject[];
+            if(qryResult.length !== 1){
+              res.status(403).send({"error": "invalid token"});
+              return;
+            }
+            res.status(200).send({
+              "data": {
+                "user": qryResult[0]
+              }
+            });
+          })
         next();
       }
     } catch (err) {
@@ -74,15 +87,14 @@ export function updateUserProfile(sql: mysql.Connection | mysql.Pool) {
       res.status(401).send({ "error": "No token" });
       return;
     }
-    let payload;
+    let payload = {"id": 0};
     try {
-      payload = (await jwt.decode(access_token)).payload;
+      payload = (await jwt.decode(access_token)).payload as {"id": number} & jose.JWTPayload;
     } catch (err) {
       res.status(403).send({ "error": "Can't parse token" });
       return;
     }
-    const usrDetailObj = CanchuZod.UserDetailObject.safeParse(payload);
-    if (!usrDetailObj.success) {
+    if (!z.number().nonnegative().int().safeParse(payload.id).success) {
       res.status(403).send({ "error": "invalid token format" });
       return;
     }
@@ -92,16 +104,16 @@ export function updateUserProfile(sql: mysql.Connection | mysql.Pool) {
       return;
     }
     sql.query("UPDATE user SET name=?, introduction=?, tags=? WHERE id=?",
-      [body.data.name, body.data.introduction, body.data.tags, usrDetailObj.data.id],
+      [body.data.name, body.data.introduction, body.data.tags, payload.id],
       function (err, result: mysql.ProcedureCallPacket<mysql.ResultSetHeader>) {
         if (err) {
           res.status(500).send({ "error": "internal database error" });
-          console.error(`error while executing 'UPDATE user SET name=${body.data.name}, introduction=${body.data.introduction}, tags=${body.data.tags} WHERE id=${usrDetailObj.data.id}'\n`, err);
+          console.error(`error while executing 'UPDATE user SET name=${body.data.name}, introduction=${body.data.introduction}, tags=${body.data.tags} WHERE id=${payload.id}'\n`, err);
         } else if (result.affectedRows === 0) {
           res.status(403).send({ "error": "Wrong token" });
         } else {
-          res.status(200).send({ "data": { "user": { "id": usrDetailObj.data.id } } });
-          console.log(`user with id ${usrDetailObj.data.id} changed profile to ${body.data}`);
+          res.status(200).send({ "data": { "user": { "id": payload.id } } });
+          console.log(`user with id ${payload.id} changed profile to ${body.data}`);
           next();
         }
       })

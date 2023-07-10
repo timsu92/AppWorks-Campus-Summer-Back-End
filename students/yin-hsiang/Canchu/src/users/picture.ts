@@ -1,8 +1,9 @@
 import express from 'express';
 import mysql from 'mysql2';
 import multer from 'multer';
+import jose from 'jose';
+import z from 'zod';
 
-import { CanchuZod } from '../util/types/api.js';
 import env from '../../.env.json' assert {type: "json"};
 import * as jwt from './jwt.js';
 
@@ -31,15 +32,14 @@ export default function (sql: mysql.Connection | mysql.Pool) {
       res.status(401).send({ "error": "No token" });
       return;
     }
-    let payload;
+    let payload = { "id": 0 };
     try {
-      payload = (await jwt.decode(access_token)).payload;
+      payload = (await jwt.decode(access_token)).payload as {"id": number} & jose.JWTPayload;
     } catch (err) {
       res.status(403).send({ "error": "Can't parse token" });
       return;
     }
-    const usrDetailObj = CanchuZod.UserDetailObject.safeParse(payload);
-    if (!usrDetailObj.success) {
+    if (!z.number().nonnegative().int().safeParse(payload.id).success) {
       res.status(403).send({ "error": "invalid token format" });
       return;
     }
@@ -59,7 +59,7 @@ export default function (sql: mysql.Connection | mysql.Pool) {
       } else {
         const file = req.file;
         sql.query("UPDATE user SET picture=? WHERE id=?",
-          [`images/${file.filename}`, usrDetailObj.data.id],
+          [`images/${file.filename}`, payload.id],
           function (err, result: mysql.ProcedureCallPacket<mysql.ResultSetHeader>, fields) {
             if (err) {
               res.status(500).send({ "error": "internal database error" });
