@@ -50,29 +50,20 @@ export default function (sql: mysql.Connection | mysql.Pool) {
                   // ex result: Duplicate entry 'test@test.com' for key 'user.email'
                   res.status(403).send({ error: `${parsedReq.data.email} already registered` });
                 } else if (result.affectedRows === 1) {
-                  const usrDetailObj: Canchu.IUserDetailObject = {
+                  const usrObj: Canchu.IUserObject = {
                     "id": result.insertId,
+                    "provider": "native",
+                    "email": parsedReq.data.email,
                     "name": parsedReq.data.name,
                     "picture": "",
-                    "friend_count": 0, // skip first
-                    "introduction": '',
-                    "tags": "",
-                    "friendship": null // skip first
                   };
                   res.status(200).send({
                     "data":{
-                      // {[key: string]: any}只是為了滿足型態檢查，實際上不會沒事接受任意key
-                      "access_token": await jwt.encode({ "id": usrDetailObj.id }),
-                      "user": {
-                        "id": usrDetailObj.id,
-                        "provider": "native",
-                        "email": parsedReq.data.email,
-                        "name": usrDetailObj.name,
-                        "picture": usrDetailObj.picture
-                      } as Canchu.IUserObject
+                      "access_token": await jwt.encode({ "id": usrObj.id }),
+                      "user": usrObj
                     }
                   });
-                  console.log("registered ", usrDetailObj);
+                  console.log("registered ", usrObj);
                   next();
                 }
               });

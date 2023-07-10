@@ -39,34 +39,23 @@ export default function (sql: mysql.Connection | mysql.Pool) {
       // TODO: 暫時先略過facebook登入 <07-07-23, timsu92> //
       if (parsedBody.data.provider === "native") {
         const parsedData = parsedBody.data;
-        sql.query("SELECT id,name,picture,password,introduction,tags FROM user WHERE email=?",
+        sql.query("SELECT id,provider,email,name,picture,password FROM user WHERE email=?",
           [parsedData.email],
           async function (err, result, fields) {
             if (err) {
               res.status(500).send({ "error": "internal database error" });
-              console.error(`error while sql executing 'SELECT id,name,picture,password,introduction,tags FROM user WHERE email=${parsedData.email}'\n`, err);
+              console.error(`error while sql executing 'SELECT id,provider,email,name,picture,password FROM user WHERE email=${parsedData.email}'\n`, err);
             } else {
-              let qryResult = result as {
-                id: number,
-                name: string,
-                picture: string,
-                password: string,
-                introduction: string,
-                tags: string
-              }[];
+              let qryResult = result as (Canchu.IUserObject & {"password": string})[];
               if (qryResult.length === 0) {
                 res.status(403).send({ "error": "User Not Found" });
               } else if (await bcrypt.compare(parsedData.password, qryResult[0].password)) {
+                // @ts-expect-error
+                delete qryResult[0].password;
                 res.status(200).send({
                   "data": {
                     "access_token": await jwt.encode({ "id": qryResult[0].id }),
-                    "user": {
-                      "id": qryResult[0].id,
-                      "provider": parsedData.provider,
-                      "name": qryResult[0].name,
-                      "email": parsedData.email,
-                      "picture": qryResult[0].picture
-                    }
+                    "user": qryResult[0]
                   }
                 });
                 next();
