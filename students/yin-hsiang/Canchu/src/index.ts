@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import mysql from 'mysql2';
+import "reflect-metadata";
 
 import env from '../.env.json' assert { type: "json" };
 // routes
