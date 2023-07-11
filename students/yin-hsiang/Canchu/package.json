@@ -17,6 +17,8 @@
     "jose": "^4.14.4",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.4.5",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.3.17",
     "zod": "^3.21.4"
   },
   "devDependencies": {
