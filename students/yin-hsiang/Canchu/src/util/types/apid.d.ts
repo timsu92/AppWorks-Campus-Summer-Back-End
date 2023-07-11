@@ -6,7 +6,7 @@ declare namespace Canchu {
     name: string,
     picture: string,
   }
-  interface IFriendshopObject {
+  interface IFriendshipObject {
     id: number,
     status: "pending" | "requested" | "friend"
   }
@@ -17,6 +17,6 @@ declare namespace Canchu {
     friend_count: number,
     introduction: string,
     tags: string,
-    friendship: IFriendshopObject | null
+    friendship: IFriendshipObject | null
   }
 }
