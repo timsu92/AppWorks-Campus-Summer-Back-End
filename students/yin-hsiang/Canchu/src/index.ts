@@ -27,7 +27,7 @@ app.post(`/api/${env.apiVer}/users/signin`, signin(db));
 app.get(`/api/${env.apiVer}/users/:id/profile`, getUserProfile(sql));
 app.put(`/api/${env.apiVer}/users/profile`, updateUserProfile(sql));
 app.use('/images', express.static('static/avatar'));
-app.put(`/api/${env.apiVer}/users/picture`, changePicture(sql));
+app.put(`/api/${env.apiVer}/users/picture`, changePicture(db));
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
