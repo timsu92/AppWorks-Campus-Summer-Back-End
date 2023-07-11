@@ -22,7 +22,7 @@ app.get('/', function (req, res) {
 })
 
 app.post(`/api/${env.apiVer}/users/signup`, signup(db));
-app.post(`/api/${env.apiVer}/users/signin`, signin(sql));
+app.post(`/api/${env.apiVer}/users/signin`, signin(db));
 app.get(`/api/${env.apiVer}/users/:id/profile`, getUserProfile(sql));
 app.put(`/api/${env.apiVer}/users/profile`, updateUserProfile(sql));
 app.use('/images', express.static('static/avatar'));
