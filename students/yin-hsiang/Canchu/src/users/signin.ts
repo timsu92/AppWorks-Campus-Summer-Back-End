@@ -3,11 +3,21 @@ import z from "zod";
 import mysql from 'mysql2';
 import bcrypt from 'bcrypt';
 
-/// <reference path="../util/types/apiResponse.d.ts" />
 import * as jwt from "./jwt.js";
 
+type oSuccess = {
+  "data": {
+    "access_token": string,
+    "user": Canchu.IUserObject
+  }
+}
+
+type oError = {
+  "error": string
+}
+
 export default function (sql: mysql.Connection | mysql.Pool) {
-  return function (req: express.Request, res: express.Response, next: express.NextFunction): void {
+  return function (req: express.Request, res: express.Response<oSuccess | oError>, next: express.NextFunction): void {
     if (req.headers["content-type"] !== "application/json") {
       res.status(400).send({ error: "invalid content type" });
     }
@@ -34,20 +44,21 @@ export default function (sql: mysql.Connection | mysql.Pool) {
           async function (err, result, fields) {
             if (err) {
               res.status(500).send({ "error": "internal database error" });
-              console.error(`error while sql executing 'SELECT id,provider,email,name,picture FROM user WHERE email=${parsedData.email}'`, err);
+              console.error(`error while sql executing 'SELECT id,provider,email,name,picture,password FROM user WHERE email=${parsedData.email}'\n`, err);
             } else {
-              let usrObj = result as (Canchu.Api.Res.IUserObject & { "password": string })[];
+              let usrObj = result as (Canchu.IUserObject & { "password": string })[];
               if (usrObj.length === 0) {
                 res.status(403).send({ "error": "User Not Found" });
               } else if (await bcrypt.compare(parsedData.password, usrObj[0].password)) {
                 // @ts-expect-error
-                delete usrObj[0].password
+                delete usrObj[0].password;
                 res.status(200).send({
                   "data": {
-                    "access_token": await jwt.encode(usrObj[0] as Canchu.Api.Res.IUserObject & { [key: string]: any }),
+                    "access_token": await jwt.encode({ "id": usrObj[0].id }),
                     "user": usrObj[0]
                   }
                 });
+                next();
               } else {
                 res.status(403).send({ "error": "Wrong Password" });
               }
