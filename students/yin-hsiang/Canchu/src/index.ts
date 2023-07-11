@@ -10,7 +10,6 @@ import { getUserProfile, updateUserProfile } from './users/profile.js';
 import changePicture from './users/picture.js';
 // database
 import { Database } from './db/data-source.js';
-import { User } from './db/entity/user.js';
 
 const app = express();
 app.use(bodyParser.json());
@@ -22,7 +21,7 @@ app.get('/', function (req, res) {
   res.send("Hello friend from the other side!");
 })
 
-app.post(`/api/${env.apiVer}/users/signup`, signup(sql));
+app.post(`/api/${env.apiVer}/users/signup`, signup(db));
 app.post(`/api/${env.apiVer}/users/signin`, signin(sql));
 app.get(`/api/${env.apiVer}/users/:id/profile`, getUserProfile(sql));
 app.put(`/api/${env.apiVer}/users/profile`, updateUserProfile(sql));
