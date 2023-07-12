@@ -17,20 +17,20 @@ const app = express();
 app.use(bodyParser.json());
 const port = 3000;
 const sql = mysql.createPool(env.sqlCfg);
-const db = (await Database.initialize());
+await Database.initialize();
 
 app.get('/', function (req, res) {
   res.send("Hello friend from the other side!");
 })
 
-app.post(`/api/${env.apiVer}/users/signup`, signup(db));
-app.post(`/api/${env.apiVer}/users/signin`, signin(db));
+app.post(`/api/${env.apiVer}/users/signup`, signup);
+app.post(`/api/${env.apiVer}/users/signin`, signin);
 app.get(`/api/${env.apiVer}/users/:id/profile`, getUserProfile(sql));
 app.put(`/api/${env.apiVer}/users/profile`, updateUserProfile(sql));
 app.use('/images', express.static('static/avatar'));
-app.put(`/api/${env.apiVer}/users/picture`, changePicture(db));
+app.put(`/api/${env.apiVer}/users/picture`, changePicture);
 
-app.post(`/api/${env.apiVer}/friends/:user_id/request`, friendRequest(db));
+app.post(`/api/${env.apiVer}/friends/:user_id/request`, friendRequest);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
