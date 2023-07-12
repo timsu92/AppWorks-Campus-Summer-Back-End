@@ -28,7 +28,7 @@ export default async function (
           "picture": relation.requester.picture,
           "friendship": {
             "id": relation.id,
-            "status": relation.status
+            "status": "pending"
           }
         }
       })
