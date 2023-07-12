@@ -19,4 +19,10 @@ declare namespace Canchu {
     tags: string,
     friendship: IFriendshipObject | null
   }
+  interface IUserSearchObject {
+    id: number,
+    name: string,
+    picture: string,
+    friendship: IFriendshipObject | null
+  }
 }
