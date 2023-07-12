@@ -9,6 +9,7 @@ import signup from './users/signup.js';
 import signin from './users/signin.js';
 import { getUserProfile, updateUserProfile } from './users/profile.js';
 import changePicture from './users/picture.js';
+import friendRequest from './friends/request.js';
 // database
 import { Database } from './db/data-source.js';
 
@@ -28,6 +29,8 @@ app.get(`/api/${env.apiVer}/users/:id/profile`, getUserProfile(sql));
 app.put(`/api/${env.apiVer}/users/profile`, updateUserProfile(sql));
 app.use('/images', express.static('static/avatar'));
 app.put(`/api/${env.apiVer}/users/picture`, changePicture(db));
+
+app.post(`/api/${env.apiVer}/friends/:user_id/request`, friendRequest(db));
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
