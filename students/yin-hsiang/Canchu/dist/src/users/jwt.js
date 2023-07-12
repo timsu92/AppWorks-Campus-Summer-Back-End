@@ -12,3 +12,4 @@ export async function encode(payload) {
 export async function decode(jwt) {
     return await jose.jwtDecrypt(jwt, secret);
 }
+//# sourceMappingURL=jwt.js.map

@@ -105,3 +105,4 @@ export function updateUserProfile(sql) {
         });
     };
 }
+//# sourceMappingURL=profile.js.map
