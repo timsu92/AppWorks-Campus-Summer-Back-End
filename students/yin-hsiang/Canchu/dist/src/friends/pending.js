@@ -1,7 +1,7 @@
 import { Friendship } from '../db/entity/friendship.js';
 export default async function (req, res, next) {
     const receiverId = req.body.loginUserId;
-    const friendships = await Friendship.findBy({ receiverId, "status": "pending" });
+    const friendships = await Friendship.findBy({ receiverId, "status": "requested" });
     res.status(200).send({
         "data": {
             "users": friendships.map(relation => {
