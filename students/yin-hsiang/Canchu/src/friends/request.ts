@@ -1,10 +1,8 @@
 import express from 'express';
-import * as jose from 'jose';
-import z from 'zod';
 
-import * as jwt from '../users/jwt.js';
 import { User } from '../db/entity/user.js';
 import { Friendship } from '../db/entity/friendship.js';
+import { AccessTokenSuccessBody } from '../users/auth.js';
 
 type oSuccess = {
   "data": {
@@ -16,35 +14,13 @@ type oError = {
   "error": string
 }
 
-export default async function (req: express.Request, res: express.Response<oSuccess | oError>, next: express.NextFunction) {
+export default async function (req: express.Request<{ "user_id": any }, oSuccess | oError, AccessTokenSuccessBody>, res: express.Response<oSuccess | oError>, next: express.NextFunction) {
   if (!Number.isInteger(+req.params.user_id)) {
     res.status(400).send({ "error": "invalid user_id" });
     return;
   }
   const receiverId = +req.params.user_id;
-  const access_token = (req.headers["authorization"] ?? "").match(/(?<=^Bearer ).+/)?.[0];
-  if (access_token === undefined) {
-    res.status(401).send({ "error": "no token" });
-    return;
-  }
-
-  let requesterId = 0;
-  try {
-    const payload = (await jwt.decode(access_token)).payload as { "id": number } & jose.JWTPayload;
-    if (!z.number().nonnegative().int().safeParse(payload["id"]).success) {
-      res.status(403).send({ "error": "Wrong token format" });
-      return;
-    }
-    requesterId = payload.id;
-  } catch (err) {
-    if (err instanceof jose.errors.JOSEError) {
-      res.status(403).send({ "error": "invalid token" });
-      return;
-    } else {
-      res.status(500).send({ "error": "unknown error" });
-      console.error("error while decoding access_token:", err);
-    }
-  }
+  const requesterId = req.body.loginUserId;
 
   if (requesterId === receiverId) {
     res.status(400).send({ "error": "can't make friend with self" });
