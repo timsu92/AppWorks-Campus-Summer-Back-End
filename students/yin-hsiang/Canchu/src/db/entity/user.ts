@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, OneToMany } from 'typeorm';
+import { Friendship } from './friendship.js';
 
 @Entity()
 export class User extends BaseEntity {
@@ -25,6 +26,12 @@ export class User extends BaseEntity {
 
   @Column({"length": 255, "nullable": false, "default": ""})
   tags!: string
+
+  @OneToMany(() => Friendship, friend => friend.requester)
+  requested!: import("./friendship.js").Friendship[];
+
+  @OneToMany(() => Friendship, friend => friend.receiver)
+  received!: import("./friendship.js").Friendship[];
 }
 
 @Entity("user")
