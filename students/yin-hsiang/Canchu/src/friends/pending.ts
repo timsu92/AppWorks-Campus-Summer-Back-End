@@ -18,7 +18,7 @@ export default async function (
   next: express.NextFunction
 ) {
   const receiverId = req.body.loginUserId;
-  const friendships = await Friendship.findBy({ receiverId, "status": "requested" });
+  const friendships = await Friendship.find({"where": {receiverId, "status": "requested"}, "relations": ["requester"]});
   res.status(200).send({
     "data": {
       "users": friendships.map(relation => {
