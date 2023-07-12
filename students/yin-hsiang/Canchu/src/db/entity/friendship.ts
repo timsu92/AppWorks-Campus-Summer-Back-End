@@ -8,7 +8,7 @@ export class Friendship extends BaseEntity {
   id!: number;
 
   @Column()
-  status!: "pending" | "requested" | "friend";
+  status!: "requested" | "friend";
 
   @Column("bigint")
   requesterId!: number;
