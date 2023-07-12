@@ -55,6 +55,35 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `canchu` /*!40100 DEFAULT CHARACTER SET
 USE `canchu`;
 
 --
+-- Table structure for table `friendship`
+--
+
+DROP TABLE IF EXISTS `friendship`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `friendship` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `status` enum('pending','requested','friend') NOT NULL,
+  `requesterId` bigint unsigned NOT NULL,
+  `receiverId` bigint unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uc_requester_receiver` (`requesterId`,`receiverId`),
+  KEY `fk_receiverId` (`receiverId`),
+  CONSTRAINT `fk_receiverId` FOREIGN KEY (`receiverId`) REFERENCES `user` (`id`),
+  CONSTRAINT `fk_requesterId` FOREIGN KEY (`requesterId`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `friendship`
+--
+
+LOCK TABLES `friendship` WRITE;
+/*!40000 ALTER TABLE `friendship` DISABLE KEYS */;
+/*!40000 ALTER TABLE `friendship` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `user`
 --
 
@@ -73,7 +102,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,7 +111,6 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'native','user-cvKv7pae','user-cvKv7pae@test.com','','$2b$10$/R3Ky5hBq7QRldqbE0.fVuk3elNsrRHiwqnhhby7lZT52zQB/wzJq','',''),(2,'native','user-RuF2oJAu','user-RuF2oJAu@test.com','','$2b$10$.XR4pxdd3L01oDTmZBXpfOa3LycV0MjBADAuThqMoyqv/bKSe9fCC','',''),(3,'native','true','test@test.com','images/4fe388d354a7430c2f4ee994f19cb2f6','$2b$10$fZxfLLz8ZyCXNYBz5xAxWu6TH83mofvKXVn2SUl1UREUsUCrpApI2','',''),(4,'native','user-S8zqaZZw','user-S8zqaZZw@test.com','','$2b$10$aGidxEjPXh4EWzmOhRp4yuYFAiLVwqjRjCHKs7dA3W/LxXxR2NDUO','',''),(5,'native','user-GqSshO52','user-GqSshO52@test.com','','$2b$10$e8whzVQGadRHe0OpDvkqQeDb2728t7ukKn9ElFJgn9ucC2GYAHfo2','',''),(6,'native','test','test2@test.com','','$2b$10$ecZSZgfCTQTRHgk.7BncjuB1CG51iKnBCaBmuGlnLON8/.GiGsIfS','',''),(7,'native','user-rybAUrRN','user-rybAUrRN@test.com','','$2b$10$uogTfi5z5c23XbAHgIWreuGZsdYErefiDL/r52B3I1oWRsPSHv9i2','',''),(8,'native','user-XKWaHdQB','user-XKWaHdQB@test.com','','$2b$10$4Z84Vb3s74Rw8in0/63MNOZWgucEmprIhgMsf5YiG1.VfYy3YWPVO','',''),(9,'native','user-kvEBB4aV','user-kvEBB4aV@test.com','','$2b$10$T6sOpzBBbMt6ni0Hixo4YeXZ0jBkmTz..Dmm0en5eXw.nEMlgxoWq','',''),(10,'native','','test1@test.com','','$2b$10$Ji1X6DWr7wpevYXR2iYdhus2VReU29DmngrLH5OaXY.Q.T98Msi82','',''),(11,'native','tester','test3@test.com','','$2b$10$IUZ2NkDVcPo.tKYssHnb3ugjyqA1bzdG3OHTD9vNKjdllLPPQsioW','test1@test.com',''),(12,'native','user-KRYuh5SZ','user-KRYuh5SZ@test.com','','$2b$10$T0fZ7ymONrfaOD77rHv0TOf7h2T1DRMPt7BtG1zdVTsrOi1Yn2FVG','',''),(13,'native','user-tbO3V8uZ','user-tbO3V8uZ@test.com','','$2b$10$74rIJvYpbYUOTiV3w4XRyOTOdEzq1zTqL5WZKBf2wP2VEqh3GfBbW','',''),(14,'native','user-smNQFlz9','user-eqteozFE@test.com','images/ee4d91aa594151d6983afbf38bba4d6c','$2b$10$LFmFSip5TZfHrB5sIee74OiONfYfD/1zmb8fWi.k4cqnvI/46k1UG','QgoPEujDMrREIpStZ2jEUmPJTjFntruzcspL7WqoxUrGjuRTj4gLwWVgw3JRgAR6','GZmdy0,CWjmj4,0I78k2'),(15,'native','user-AlMNDI6x','user-AlMNDI6x@test.com','','$2b$10$sIM7d8Aw2ALQZaS/Nsw0X./iYMhGgTf/yR9FIxblwUUawBAdTjwJG','','');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -95,4 +123,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-10 16:25:18
+-- Dump completed on 2023-07-12  3:32:47
