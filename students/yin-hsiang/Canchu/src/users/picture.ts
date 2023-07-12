@@ -6,7 +6,7 @@ import z from 'zod';
 import env from '../../.env.json' assert {type: "json"};
 import * as jwt from './jwt.js';
 import { DataSource } from 'typeorm';
-import { UserObject } from '../db/entity/user.js';
+import { User } from '../db/entity/user.js';
 
 export default function (db: DataSource) {
   type oSuccess = {
@@ -59,7 +59,7 @@ export default function (db: DataSource) {
         res.status(400).send({ "error": "did not upload file correctly" });
       } else {
         const file = req.file;
-        db.getRepository(UserObject).update({ "id": payload.id }, { "picture": `images/${file.filename}` })
+        db.getRepository(User).update({ "id": payload.id }, { "picture": `images/${file.filename}` })
           .then((updateResult) => {
             if (updateResult.affected === 1) {
               res.status(200).send({ "data": { "picture": `http://${env.sqlCfg.host}/images/${file.filename}` } });

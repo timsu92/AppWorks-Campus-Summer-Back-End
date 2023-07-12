@@ -33,27 +33,3 @@ export class User extends BaseEntity {
   @OneToMany(() => Friendship, friend => friend.receiver)
   received!: import("./friendship.js").Friendship[];
 }
-
-@Entity("user")
-export class UserObject extends BaseEntity {
-  @PrimaryGeneratedColumn("increment")
-  id!: number
-
-  @Column({"nullable": false})
-  provider!: 'native' | 'facebook'
-
-  @Column({"length": 255, "unique": true, "nullable": false})
-  email!: string
-
-  @Column({"length": 255, "nullable": false})
-  name!: string
-
-  @Column({"length": 255, "nullable": false, "default": ""})
-  picture!: string
-}
-
-@Entity("user")
-export class UserObjectPasswd extends UserObject {
-  @Column({"length": 255, "nullable": false})
-  password!: string
-}

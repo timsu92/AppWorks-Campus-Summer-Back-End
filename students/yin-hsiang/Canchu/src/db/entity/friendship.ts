@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
-import { UserObject } from "./user.js";
+import { User } from "./user.js";
 
 @Entity()
 @Unique("uc_requester_receiver", ['requesterId', 'receiverId'])

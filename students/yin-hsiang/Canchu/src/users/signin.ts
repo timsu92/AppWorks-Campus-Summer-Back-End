@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 
 import * as jwt from "./jwt.js";
 import { DataSource, QueryFailedError } from "typeorm";
-import { UserObjectPasswd } from "../db/entity/user.js";
+import { User } from "../db/entity/user.js";
 
 type oSuccess = {
   "data": {
@@ -40,7 +40,7 @@ export default function (db: DataSource) {
       // TODO: 暫時先略過facebook登入 <07-07-23, timsu92> //
       if (parsedBody.data.provider === "native") {
         const parsedData = parsedBody.data;
-        db.getRepository(UserObjectPasswd).findOneBy({ "email": parsedData.email })
+        db.getRepository(User).findOneBy({ "email": parsedData.email })
           .then(async (usr) => {
             if (usr === null) {
               res.status(403).send({ "error": "User Not Found" });
