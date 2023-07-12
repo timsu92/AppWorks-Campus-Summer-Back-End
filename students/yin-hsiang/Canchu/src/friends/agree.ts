@@ -42,7 +42,7 @@ export default async function (
     return;
   }
 
-  let friendship = await Friendship.findOneBy({ "requesterId": requesterId, "receiverId": receiverId });
+  let friendship = await Friendship.findOneBy({ "requesterId": requesterId, "receiverId": receiverId, "status": "requested" });
   if (friendship === null) {
     res.status(400).send({ "error": "friendship request not performed" });
     return;
