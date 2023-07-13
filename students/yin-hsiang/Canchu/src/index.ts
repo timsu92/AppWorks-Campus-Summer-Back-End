@@ -13,10 +13,12 @@ import friendRequest from './friends/request.js';
 import friendAgree from './friends/agree.js';
 import friendPending from './friends/pending.js';
 import friendDelete from './friends/delete.js';
+import friendGet from './friends/get.js';
+
 // database
 import { Database } from './db/data-source.js';
 // utils
-import { accessToken } from './users/auth.js';
+import { accessToken, userExist } from './users/auth.js';
 
 const app = express();
 app.use(bodyParser.json());
@@ -35,6 +37,7 @@ app.put(`/api/${env.apiVer}/users/profile`, updateUserProfile(sql));
 app.use('/images', express.static('static/avatar'));
 app.put(`/api/${env.apiVer}/users/picture`, changePicture);
 
+app.get(`/api/${env.apiVer}/friends`, [accessToken, userExist], friendGet);
 app.post(`/api/${env.apiVer}/friends/:user_id/request`, [accessToken], friendRequest);
 app.post(`/api/${env.apiVer}/friends/:friendship_id/agree`, [accessToken], friendAgree)
 app.get(`/api/${env.apiVer}/friends/pending`, [accessToken], friendPending);
