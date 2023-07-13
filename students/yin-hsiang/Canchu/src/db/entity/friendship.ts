@@ -18,9 +18,9 @@ export class Friendship extends BaseEntity {
 
   @ManyToOne(() => User, user => user.requested)
   @JoinColumn({ "name": "requesterId", "foreignKeyConstraintName": "fk_requesterId" })
-  requester!: import("./user.js").User;
+  requester?: import("./user.js").User;
 
   @ManyToOne(() => User, user => user.received)
   @JoinColumn({ "name": "receiverId", "foreignKeyConstraintName": "fk_receiverId" })
-  receiver!: import("./user.js").User;
+  receiver?: import("./user.js").User;
 }

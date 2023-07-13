@@ -23,9 +23,9 @@ export default async function (
     "data": {
       "users": friendships.map(relation => {
         return {
-          "id": relation.requester.id,
-          "name": relation.requester.name,
-          "picture": relation.requester.picture,
+          "id": relation.requester!.id,
+          "name": relation.requester!.name,
+          "picture": relation.requester!.picture,
           "friendship": {
             "id": relation.id,
             "status": "pending"
