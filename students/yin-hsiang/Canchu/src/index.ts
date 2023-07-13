@@ -17,6 +17,7 @@ import friendDelete from './friends/delete.js';
 import friendGet from './friends/get.js';
 
 import eventGet from './events/get.js';
+import eventRead from './events/read.js';
 
 // database
 import { Database } from './db/data-source.js';
@@ -47,6 +48,7 @@ app.get(`/api/${env.apiVer}/friends/pending`, [accessToken], friendPending);
 app.delete(`/api/${env.apiVer}/friends/:friendship_id`, [accessToken], friendDelete);
 
 app.get(`/api/${env.apiVer}/events`, [accessToken, userExist], eventGet);
+app.post(`/api/${env.apiVer}/events/:event_id/read`, [accessToken], eventRead);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
