@@ -28,8 +28,8 @@ export class User extends BaseEntity {
   tags!: string
 
   @OneToMany(() => Friendship, friend => friend.requester)
-  requested!: import("./friendship.js").Friendship[];
+  requested?: import("./friendship.js").Friendship[];
 
   @OneToMany(() => Friendship, friend => friend.receiver)
-  received!: import("./friendship.js").Friendship[];
+  received?: import("./friendship.js").Friendship[];
 }
