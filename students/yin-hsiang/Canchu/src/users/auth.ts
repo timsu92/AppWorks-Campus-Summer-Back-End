@@ -3,6 +3,7 @@ import * as jose from 'jose';
 import z from 'zod';
 
 import * as jwt from "./jwt.js";
+import { User } from "../db/entity/user.js";
 
 export type AccessTokenSuccessBody = {
   "loginUserId": number
@@ -36,5 +37,19 @@ export async function accessToken(req: express.Request<{}, AccessTokenErrorBody,
       console.error("error while decoding access_token:", err);
       return;
     }
+  }
+}
+
+export async function userExist(
+  req: express.Request<{}, AccessTokenErrorBody, AccessTokenSuccessBody>,
+  res: express.Response<AccessTokenErrorBody>,
+  next: express.NextFunction
+) {
+  if (typeof req.body.loginUserId !== "number") {
+    res.status(401).send({ "error": "No token" });
+    return;
+  }
+  if ((await User.findOneBy({ "id": req.body.loginUserId })) === null) {
+    res.status(403).send({ "error": "Invalid token" });
   }
 }
