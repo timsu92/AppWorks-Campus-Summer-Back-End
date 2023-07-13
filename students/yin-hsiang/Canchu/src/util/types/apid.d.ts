@@ -25,4 +25,12 @@ declare namespace Canchu {
     picture: string,
     friendship: IFriendshipObject | null
   }
+  interface IEventObject {
+    id: number,
+    type: "friend_request",
+    image: string,
+    summary: string,
+    is_read: boolean,
+    created_at: string
+  }
 }
