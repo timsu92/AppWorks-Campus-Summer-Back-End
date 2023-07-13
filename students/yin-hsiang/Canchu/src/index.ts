@@ -12,6 +12,7 @@ import changePicture from './users/picture.js';
 import friendRequest from './friends/request.js';
 import friendAgree from './friends/agree.js';
 import friendPending from './friends/pending.js';
+import friendDelete from './friends/delete.js';
 // database
 import { Database } from './db/data-source.js';
 // utils
@@ -37,6 +38,7 @@ app.put(`/api/${env.apiVer}/users/picture`, changePicture);
 app.post(`/api/${env.apiVer}/friends/:user_id/request`, [accessToken], friendRequest);
 app.post(`/api/${env.apiVer}/friends/:friendship_id/agree`, [accessToken], friendAgree)
 app.get(`/api/${env.apiVer}/friends/pending`, [accessToken], friendPending);
+app.delete(`/api/${env.apiVer}/friends/:friendship_id`, [accessToken], friendDelete);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
