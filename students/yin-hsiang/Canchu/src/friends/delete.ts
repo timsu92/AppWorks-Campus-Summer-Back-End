@@ -29,7 +29,6 @@ export default async function (
     return;
   }
   if (friendship.status === "friend") {
-    console.log(`aabc ${req.body.loginUserId} ${friendship.requesterId} ${friendship.receiverId}`);
     if ([friendship.requesterId, friendship.receiverId].includes(req.body.loginUserId)) {
       await friendship.remove();
       console.log(`user ${req.body.loginUserId} revoked friendship between ${friendship.requesterId} and ${friendship.receiverId}`);
