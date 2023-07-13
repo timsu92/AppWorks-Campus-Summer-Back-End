@@ -9,11 +9,14 @@ import signup from './users/signup.js';
 import signin from './users/signin.js';
 import { getUserProfile, updateUserProfile } from './users/profile.js';
 import changePicture from './users/picture.js';
+
 import friendRequest from './friends/request.js';
 import friendAgree from './friends/agree.js';
 import friendPending from './friends/pending.js';
 import friendDelete from './friends/delete.js';
 import friendGet from './friends/get.js';
+
+import eventGet from './events/get.js';
 
 // database
 import { Database } from './db/data-source.js';
@@ -42,6 +45,8 @@ app.post(`/api/${env.apiVer}/friends/:user_id/request`, [accessToken], friendReq
 app.post(`/api/${env.apiVer}/friends/:friendship_id/agree`, [accessToken], friendAgree)
 app.get(`/api/${env.apiVer}/friends/pending`, [accessToken], friendPending);
 app.delete(`/api/${env.apiVer}/friends/:friendship_id`, [accessToken], friendDelete);
+
+app.get(`/api/${env.apiVer}/events`, [accessToken, userExist], eventGet);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
