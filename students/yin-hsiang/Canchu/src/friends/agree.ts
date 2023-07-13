@@ -31,7 +31,7 @@ export default async function (
     return;
   }
   if (receiverId !== friendship.receiverId) {
-    res.status(403).send({"error": "Permission denied"});
+    res.status(400).send({"error": "Permission denied"});
     return;
   }
   if(friendship.status === "friend"){
