@@ -52,4 +52,5 @@ export async function userExist(
   if ((await User.findOneBy({ "id": req.body.loginUserId })) === null) {
     res.status(403).send({ "error": "Invalid token" });
   }
+  next();
 }
