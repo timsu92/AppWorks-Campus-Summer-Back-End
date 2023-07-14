@@ -53,7 +53,7 @@ export class Event_ extends BaseEntity {
         if(this.friendship === undefined){
           throw new ReferenceError("can't access 'friendship' who isn't initialized yet");
         }
-        if (this.friendship.status === "friend")
+        if (this.friendship.requesterId === this.ownerId)
           return `${this.participant.name} has accepted your friend request.` as const;
         else
           return `${this.participant.name} invited you to be friends.` as const;
