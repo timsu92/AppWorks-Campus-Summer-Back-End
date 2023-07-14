@@ -39,7 +39,18 @@ export default async function (req: express.Request<{ "user_id": any }, oSuccess
     return;
   }
 
-  let friendship = await Friendship.findOneBy({ "requesterId": requesterId, "receiverId": receiverId });
+  let friendship = await Friendship.findOneBy({ "requesterId": receiverId, "receiverId": requesterId });
+  if (friendship) {
+    if (friendship.status === "requested") {
+      res.status(400).send({ "error": "the opponent has already invited you to be friends" });
+      return;
+    } else {
+      res.status(400).send({ "error": "already friend" });
+      return;
+    }
+  }
+
+  friendship = await Friendship.findOneBy({ "requesterId": requesterId, "receiverId": receiverId });
   if (friendship) {
     if (friendship.status === "requested") {
       res.status(400).send({ "error": "already requested" });
