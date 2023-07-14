@@ -9,6 +9,7 @@ import signup from './users/signup.js';
 import signin from './users/signin.js';
 import { getUserProfile, updateUserProfile } from './users/profile.js';
 import changePicture from './users/picture.js';
+import searchUser from './users/search.js';
 
 import friendRequest from './friends/request.js';
 import friendAgree from './friends/agree.js';
@@ -40,6 +41,7 @@ app.get(`/api/${env.apiVer}/users/:id/profile`, getUserProfile(sql));
 app.put(`/api/${env.apiVer}/users/profile`, updateUserProfile(sql));
 app.use('/images', express.static('static/avatar'));
 app.put(`/api/${env.apiVer}/users/picture`, changePicture);
+app.get(`/api/${env.apiVer}/users/search`, [accessToken, userExist], searchUser);
 
 app.get(`/api/${env.apiVer}/friends`, [accessToken, userExist], friendGet);
 app.post(`/api/${env.apiVer}/friends/:user_id/request`, [accessToken], friendRequest);
