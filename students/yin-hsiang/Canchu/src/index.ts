@@ -27,7 +27,7 @@ import { accessToken, userExist } from './users/auth.js';
 const app = express();
 app.use(bodyParser.json());
 const port = 3000;
-const sql = mysql.createPool(env.sqlCfg);
+const sql = mysql.createPool(env.sqlCfgOld);
 await Database.initialize();
 
 app.get('/', function (req, res) {
