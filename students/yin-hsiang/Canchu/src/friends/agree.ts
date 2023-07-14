@@ -58,9 +58,7 @@ export default async function (
   try {
     await notification.save();
   } catch (err) {
-    res.status(500).send({ "error": "Internal database error" });
-    console.error("error while saving friendship access event:", err);
-    return;
+    console.error("Error when saving notification when friendship agreed:", err);
   }
 
   res.status(200).send({

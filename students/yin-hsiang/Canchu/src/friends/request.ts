@@ -69,9 +69,7 @@ export default async function (req: express.Request<{ "user_id": any }, oSuccess
   try {
     await notification.save();
   } catch (err) {
-    res.status(500).send({ "error": "Internal database error" });
     console.error(`Error when saving notification when friendship requested:`, err);
-    return;
   }
 
   res.status(200).send({
