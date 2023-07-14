@@ -33,7 +33,7 @@ export class Event_ extends BaseEntity {
   @Column({type: "bigint", nullable: true, unsigned: true})
   friendshipId?: number;
 
-  @OneToOne(() => Friendship)
+  @OneToOne(() => Friendship, {"onDelete": "CASCADE"})
   @JoinColumn({"name": "friendshipId"})
   friendship?: Friendship;
 
