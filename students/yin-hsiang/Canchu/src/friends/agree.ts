@@ -26,10 +26,7 @@ export default async function (
   const friendshipId = +req.params.friendship_id;
   const receiverId = req.body.loginUserId;
 
-  let friendship = await Friendship.findOne({
-    "where": { "id": friendshipId },
-    "relations": ["requester"],
-  });
+  let friendship = await Friendship.findOneBy({ "id": friendshipId });
   if (friendship === null) {
     res.status(400).send({ "error": "friendship request not performed" });
     return;
@@ -52,8 +49,8 @@ export default async function (
 
   const notification = new Event_();
   notification.type = "friend_request";
-  notification.ownerId = receiverId;
-  notification.participantId = friendship.requester!.id;
+  notification.ownerId = friendship.requesterId;
+  notification.participantId = friendship.receiverId;
   notification.friendshipId = friendship.id;
   try {
     await notification.save();
