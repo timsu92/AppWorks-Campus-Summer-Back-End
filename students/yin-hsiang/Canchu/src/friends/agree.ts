@@ -2,6 +2,7 @@ import express from 'express';
 
 import { Friendship } from '../db/entity/friendship.js';
 import { AccessTokenSuccessBody } from '../users/auth.js';
+import { Event_ } from '../db/entity/event.js';
 
 type oSuccess = {
   "data": {
@@ -25,34 +26,51 @@ export default async function (
   const friendshipId = +req.params.friendship_id;
   const receiverId = req.body.loginUserId;
 
-  let friendship = await Friendship.findOneBy({ "id": friendshipId });
+  let friendship = await Friendship.findOne({
+    "where": { "id": friendshipId },
+    "relations": ["requester"],
+  });
   if (friendship === null) {
     res.status(400).send({ "error": "friendship request not performed" });
     return;
   }
   if (receiverId !== friendship.receiverId) {
-    res.status(400).send({"error": "Permission denied"});
+    res.status(400).send({ "error": "Permission denied" });
     return;
   }
-  if(friendship.status === "friend"){
-    res.status(400).send({"error": "already friends"});
+  if (friendship.status === "friend") {
+    res.status(400).send({ "error": "already friends" });
   }
   friendship.status = "friend";
   try {
     friendship = await friendship.save();
-    res.status(200).send({
-      "data": {
-        "friendship": {
-          "id": friendship.id,
-          "status": friendship.status
-        }
-      }
-    });
-    console.log(`${friendship.requesterId} and ${receiverId} have become friends`);
-    next();
   } catch (err) {
     res.status(500).send({ "error": "internal database error" });
     console.error("error while updating friendship:", err);
     return;
   }
+
+  const notification = new Event_();
+  notification.type = "friend_request";
+  notification.ownerId = receiverId;
+  notification.participantId = friendship.requester!.id;
+  notification.friendshipId = friendship.id;
+  try {
+    await notification.save();
+  } catch (err) {
+    res.status(500).send({ "error": "Internal database error" });
+    console.error("error while saving friendship access event:", err);
+    return;
+  }
+
+  res.status(200).send({
+    "data": {
+      "friendship": {
+        "id": friendship.id,
+        "status": friendship.status
+      }
+    }
+  });
+  console.log(`${friendship.requesterId} and ${receiverId} have become friends`);
+  next();
 }
