@@ -37,6 +37,7 @@ export default async function (
   }
   if (friendship.status === "friend") {
     res.status(400).send({ "error": "already friends" });
+    return;
   }
   friendship.status = "friend";
   try {
