@@ -2,6 +2,7 @@ import express from 'express';
 
 import { Friendship } from '../db/entity/friendship.js';
 import { AccessTokenSuccessBody } from '../users/auth.js';
+import { Event_ } from '../db/entity/event.js';
 
 type oSuccess = {
   "data": {
@@ -31,28 +32,41 @@ export default async function (
     return;
   }
   if (receiverId !== friendship.receiverId) {
-    res.status(400).send({"error": "Permission denied"});
+    res.status(400).send({ "error": "Permission denied" });
     return;
   }
-  if(friendship.status === "friend"){
-    res.status(400).send({"error": "already friends"});
+  if (friendship.status === "friend") {
+    res.status(400).send({ "error": "already friends" });
+    return;
   }
   friendship.status = "friend";
   try {
     friendship = await friendship.save();
-    res.status(200).send({
-      "data": {
-        "friendship": {
-          "id": friendship.id,
-          "status": friendship.status
-        }
-      }
-    });
-    console.log(`${friendship.requesterId} and ${receiverId} have become friends`);
-    next();
   } catch (err) {
     res.status(500).send({ "error": "internal database error" });
     console.error("error while updating friendship:", err);
     return;
   }
+
+  const notification = new Event_();
+  notification.type = "friend_request";
+  notification.ownerId = friendship.requesterId;
+  notification.participantId = friendship.receiverId;
+  notification.friendshipId = friendship.id;
+  try {
+    await notification.save();
+  } catch (err) {
+    console.error("Error when saving notification when friendship agreed:", err);
+  }
+
+  res.status(200).send({
+    "data": {
+      "friendship": {
+        "id": friendship.id,
+        "status": friendship.status
+      }
+    }
+  });
+  console.log(`${friendship.requesterId} and ${receiverId} have become friends`);
+  next();
 }

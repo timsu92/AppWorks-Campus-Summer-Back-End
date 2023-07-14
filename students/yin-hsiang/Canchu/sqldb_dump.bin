@@ -55,6 +55,40 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `canchu` /*!40100 DEFAULT CHARACTER SET
 USE `canchu`;
 
 --
+-- Table structure for table `event`
+--
+
+DROP TABLE IF EXISTS `event`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `event` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `type` enum('friend_request') NOT NULL,
+  `isRead` tinyint(1) NOT NULL DEFAULT '0',
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `participantId` bigint unsigned DEFAULT NULL,
+  `ownerId` bigint unsigned NOT NULL,
+  `friendshipId` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `participantId` (`participantId`),
+  KEY `ownerId` (`ownerId`),
+  KEY `friendshipId` (`friendshipId`),
+  CONSTRAINT `event_ibfk_1` FOREIGN KEY (`participantId`) REFERENCES `user` (`id`),
+  CONSTRAINT `event_ibfk_2` FOREIGN KEY (`ownerId`) REFERENCES `user` (`id`),
+  CONSTRAINT `event_ibfk_3` FOREIGN KEY (`friendshipId`) REFERENCES `friendship` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `event`
+--
+
+LOCK TABLES `event` WRITE;
+/*!40000 ALTER TABLE `event` DISABLE KEYS */;
+/*!40000 ALTER TABLE `event` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `friendship`
 --
 
@@ -71,7 +105,7 @@ CREATE TABLE `friendship` (
   KEY `fk_receiverId` (`receiverId`),
   CONSTRAINT `fk_receiverId` FOREIGN KEY (`receiverId`) REFERENCES `user` (`id`),
   CONSTRAINT `fk_requesterId` FOREIGN KEY (`requesterId`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,7 +136,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,4 +157,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-12  3:32:47
+-- Dump completed on 2023-07-14  5:17:35

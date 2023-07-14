@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, OneToMany } from 'typeorm';
 import { Friendship } from './friendship.js';
+import { Event_ } from './event.js';
 
 @Entity()
 export class User extends BaseEntity {
@@ -32,4 +33,10 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Friendship, friend => friend.receiver)
   received?: import("./friendship.js").Friendship[];
+
+  @OneToMany(() => Event_, event => event.participant)
+  sentEvents?: import("./event.js").Event_[];
+
+  @OneToMany(() => Event_, event => event.owner)
+  receivedEvents?: import("./event.js").Event_[];
 }

@@ -3,6 +3,7 @@ import express from 'express';
 import { User } from '../db/entity/user.js';
 import { Friendship } from '../db/entity/friendship.js';
 import { AccessTokenSuccessBody } from '../users/auth.js';
+import { Event_ } from '../db/entity/event.js';
 
 type oSuccess = {
   "data": {
@@ -38,7 +39,18 @@ export default async function (req: express.Request<{ "user_id": any }, oSuccess
     return;
   }
 
-  let friendship = await Friendship.findOneBy({ "requesterId": requesterId, "receiverId": receiverId });
+  let friendship = await Friendship.findOneBy({ "requesterId": receiverId, "receiverId": requesterId });
+  if (friendship) {
+    if (friendship.status === "requested") {
+      res.status(400).send({ "error": "the opponent has already invited you to be friends" });
+      return;
+    } else {
+      res.status(400).send({ "error": "already friend" });
+      return;
+    }
+  }
+
+  friendship = await Friendship.findOneBy({ "requesterId": requesterId, "receiverId": receiverId });
   if (friendship) {
     if (friendship.status === "requested") {
       res.status(400).send({ "error": "already requested" });
@@ -54,19 +66,31 @@ export default async function (req: express.Request<{ "user_id": any }, oSuccess
   friendship.status = "requested";
   try {
     friendship = await friendship.save();
-    res.status(200).send({
-      "data": {
-        "friendship": {
-          "id": friendship.id,
-          "status": friendship.status
-        }
-      }
-    });
-    console.log(requesterId, "requests to make friend with", receiverId);
-    next();
   } catch (err) {
     res.status(500).send({ "error": "internal database error" });
     console.error("error while creating friendship:", err);
     return;
   }
+
+  const notification = new Event_();
+  notification.type = "friend_request";
+  notification.ownerId = receiver.id;
+  notification.participantId = requesterId;
+  notification.friendshipId = friendship.id;
+  try {
+    await notification.save();
+  } catch (err) {
+    console.error(`Error when saving notification when friendship requested:`, err);
+  }
+
+  res.status(200).send({
+    "data": {
+      "friendship": {
+        "id": friendship.id,
+        "status": friendship.status
+      }
+    }
+  });
+  console.log(requesterId, "requests to make friend with", receiverId);
+  next();
 }
