@@ -16,7 +16,7 @@ export default async function (
     "where": {
       "ownerId": req.body.loginUserId
     },
-    "relations": ["participant"]
+    "relations": ["participant", "friendship"]
   });
   res.status(200).send({
     "data": {
