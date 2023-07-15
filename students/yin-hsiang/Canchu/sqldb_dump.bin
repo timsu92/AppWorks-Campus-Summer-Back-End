@@ -76,7 +76,7 @@ CREATE TABLE `event` (
   CONSTRAINT `event_ibfk_1` FOREIGN KEY (`participantId`) REFERENCES `user` (`id`),
   CONSTRAINT `event_ibfk_2` FOREIGN KEY (`ownerId`) REFERENCES `user` (`id`),
   CONSTRAINT `event_ibfk_3` FOREIGN KEY (`friendshipId`) REFERENCES `friendship` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +105,7 @@ CREATE TABLE `friendship` (
   KEY `fk_receiverId` (`receiverId`),
   CONSTRAINT `fk_receiverId` FOREIGN KEY (`receiverId`) REFERENCES `user` (`id`),
   CONSTRAINT `fk_requesterId` FOREIGN KEY (`requesterId`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,6 +115,34 @@ CREATE TABLE `friendship` (
 LOCK TABLES `friendship` WRITE;
 /*!40000 ALTER TABLE `friendship` DISABLE KEYS */;
 /*!40000 ALTER TABLE `friendship` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `post`
+--
+
+DROP TABLE IF EXISTS `post`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `post` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `context` varchar(1000) NOT NULL,
+  `summary` varchar(255) DEFAULT NULL,
+  `posterId` bigint unsigned NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `poster_id` (`posterId`),
+  CONSTRAINT `post_ibfk_1` FOREIGN KEY (`posterId`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `post`
+--
+
+LOCK TABLES `post` WRITE;
+/*!40000 ALTER TABLE `post` DISABLE KEYS */;
+/*!40000 ALTER TABLE `post` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -136,7 +164,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -157,4 +185,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-14  5:17:35
+-- Dump completed on 2023-07-15 12:04:37
