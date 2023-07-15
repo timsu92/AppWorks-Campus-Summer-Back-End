@@ -20,10 +20,13 @@ import friendGet from './friends/get.js';
 import eventGet from './events/get.js';
 import eventRead from './events/read.js';
 
+import createPost from './posts/create.js';
+
 // database
 import { Database } from './db/data-source.js';
 // utils
 import { accessToken, userExist } from './users/auth.js';
+import { jsonContentType } from './util/util.js';
 
 const app = express();
 app.use(bodyParser.json());
@@ -51,6 +54,8 @@ app.delete(`/api/${env.apiVer}/friends/:friendship_id`, [accessToken], friendDel
 
 app.get(`/api/${env.apiVer}/events`, [accessToken, userExist], eventGet);
 app.post(`/api/${env.apiVer}/events/:event_id/read`, [accessToken], eventRead);
+
+app.post(`/api/${env.apiVer}/posts`, [jsonContentType, accessToken, userExist], createPost);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);

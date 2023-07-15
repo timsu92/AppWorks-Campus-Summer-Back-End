@@ -9,6 +9,5 @@ import { Post } from "./entity/post.js";
 export const Database = new DataSource({
   type: "mysql",
   ...env.sqlCfg,
-  username: "dev",
   entities: [User, Friendship, Event_, Post]
 })
