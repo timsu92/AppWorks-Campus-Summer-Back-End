@@ -21,6 +21,7 @@ import eventGet from './events/get.js';
 import eventRead from './events/read.js';
 
 import createPost from './posts/create.js';
+import updatePost from './posts/update.js';
 
 // database
 import { Database } from './db/data-source.js';
@@ -56,6 +57,7 @@ app.get(`/api/${env.apiVer}/events`, [accessToken, userExist], eventGet);
 app.post(`/api/${env.apiVer}/events/:event_id/read`, [accessToken], eventRead);
 
 app.post(`/api/${env.apiVer}/posts`, [jsonContentType, accessToken, userExist], createPost);
+app.put(`/api/${env.apiVer}/posts/:id`, [accessToken], updatePost);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);

@@ -33,4 +33,7 @@ declare namespace Canchu {
     is_read: boolean,
     created_at: string
   }
+  interface IPostObject {
+    id: number
+  }
 }

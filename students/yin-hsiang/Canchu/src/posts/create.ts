@@ -3,7 +3,7 @@ import express from 'express';
 import { AccessTokenSuccessBody } from '../users/auth.js';
 import { Post } from '../db/entity/post.js';
 
-type oSuccess = { "data": { "post": { "id": number } } };
+type oSuccess = { "data": { "post": Canchu.IPostObject } };
 type oError = { "error": string };
 
 export default async function (
