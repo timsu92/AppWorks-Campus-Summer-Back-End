@@ -23,11 +23,14 @@ import eventRead from './events/read.js';
 import createPost from './posts/create.js';
 import updatePost from './posts/update.js';
 
+import { createLike, unlike } from './posts/like.js';
+
 // database
 import { Database } from './db/data-source.js';
 // utils
 import { accessToken, userExist } from './users/auth.js';
 import { jsonContentType } from './util/util.js';
+import { createComment } from './posts/comment.js';
 
 const app = express();
 app.use(bodyParser.json());
@@ -58,6 +61,11 @@ app.post(`/api/${env.apiVer}/events/:event_id/read`, [accessToken], eventRead);
 
 app.post(`/api/${env.apiVer}/posts`, [jsonContentType, accessToken, userExist], createPost);
 app.put(`/api/${env.apiVer}/posts/:id`, [accessToken], updatePost);
+
+app.post(`/api/${env.apiVer}/posts/:id/like`, [accessToken, userExist], createLike);
+app.delete(`/api/${env.apiVer}/posts/:id/like`, [accessToken], unlike);
+
+app.post(`/api/${env.apiVer}/posts/:id/comment`, [jsonContentType, accessToken, userExist], createComment);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);

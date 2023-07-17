@@ -1,32 +1,32 @@
 import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, OneToMany } from 'typeorm';
 import { Friendship } from './friendship.js';
 import { Event_ } from './event.js';
-import { Post } from './post.js';
+import { Post, PostLikes } from './post.js';
 
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id!: number
 
-  @Column({"nullable": false})
+  @Column({ "nullable": false })
   provider!: 'native' | 'facebook'
 
-  @Column({"length": 255, "nullable": false})
+  @Column({ "length": 255, "nullable": false })
   name!: string
 
-  @Column({"length": 255, "unique": true, "nullable": false})
+  @Column({ "length": 255, "unique": true, "nullable": false })
   email!: string
 
-  @Column({"length": 255, "nullable": false, "default": ""})
+  @Column({ "length": 255, "nullable": false, "default": "" })
   picture!: string
 
-  @Column({"length": 255, "nullable": false})
+  @Column({ "length": 255, "nullable": false })
   password!: string
 
-  @Column({"length": 500, "nullable": false, "default": ""})
+  @Column({ "length": 500, "nullable": false, "default": "" })
   introduction!: string
 
-  @Column({"length": 255, "nullable": false, "default": ""})
+  @Column({ "length": 255, "nullable": false, "default": "" })
   tags!: string
 
   @OneToMany(() => Friendship, friend => friend.requester)
@@ -43,4 +43,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Post, post => post.poster)
   posts?: import("./post.js").Post[];
+
+  @OneToMany(() => PostLikes, postlike => postlike.likers)
+  likedPosts?: import("./post.js").PostLikes[];
 }
