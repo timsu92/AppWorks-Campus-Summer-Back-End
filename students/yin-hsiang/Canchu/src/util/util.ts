@@ -14,7 +14,7 @@ export function date2CanchuStr(timestamp: Date) {
 }
 
 export function jsonContentType(
-  req: express.Request,
+  req: express.Request<{}>,
   res: express.Response<{ "error": "Invalid content-type" }>,
   next: express.NextFunction
 ) {
