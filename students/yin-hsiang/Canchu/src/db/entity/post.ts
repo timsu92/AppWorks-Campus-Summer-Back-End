@@ -24,6 +24,9 @@ export class Post extends BaseEntity {
 
   @OneToMany(() => PostLikes, postLike => postLike.posts)
   likers?: import("./user.js").User[];
+
+  @OneToMany(() => PostComment, cmt => cmt.post)
+  comments?: PostComment[];
 }
 
 @Entity()
@@ -44,4 +47,28 @@ export class PostLikes extends BaseEntity {
   @ManyToOne(() => Post, { "onDelete": "CASCADE" })
   @JoinColumn({ "name": "postId" })
   posts?: Post[];
+}
+
+@Entity()
+export class PostComment extends BaseEntity {
+  @PrimaryGeneratedColumn('increment')
+  id!: number;
+
+  @Column({"type": "bigint", "nullable": false, "unsigned": true})
+  posterId!: number;
+
+  @ManyToOne(() => User)
+  poster?: import("./user.js").User;
+
+  @Column({"type": "bigint", "nullable": false, "unsigned": true})
+  postId!: number;
+
+  @ManyToOne(() => Post, post => post.comments)
+  post?: Post;
+
+  @Column({"type": "datetime", "nullable": false, "default": "CURRENT_TIMESTAMP"})
+  createdAt!: Date;
+
+  @Column({"type": "varchar", "nullable": false, "length": 500})
+  content!: string;
 }
