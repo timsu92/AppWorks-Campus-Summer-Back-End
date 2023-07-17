@@ -23,7 +23,7 @@ import eventRead from './events/read.js';
 import createPost from './posts/create.js';
 import updatePost from './posts/update.js';
 
-import { createLike } from './posts/like.js';
+import { createLike, unlike } from './posts/like.js';
 
 // database
 import { Database } from './db/data-source.js';
@@ -62,6 +62,7 @@ app.post(`/api/${env.apiVer}/posts`, [jsonContentType, accessToken, userExist], 
 app.put(`/api/${env.apiVer}/posts/:id`, [accessToken], updatePost);
 
 app.post(`/api/${env.apiVer}/posts/:id/like`, [accessToken, userExist], createLike);
+app.delete(`/api/${env.apiVer}/posts/:id/like`, [accessToken], unlike);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
