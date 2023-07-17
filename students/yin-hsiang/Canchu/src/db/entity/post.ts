@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.js";
 
 @Entity()
@@ -21,4 +21,27 @@ export class Post extends BaseEntity {
   @ManyToOne(() => User, usr => usr.posts, { "onDelete": "CASCADE" })
   @JoinColumn({ "name": "posterId" })
   poster?: import('./user.js').User;
+
+  @OneToMany(() => PostLikes, postLike => postLike.posts)
+  likers?: import("./user.js").User[];
+}
+
+@Entity()
+export class PostLikes extends BaseEntity {
+  @PrimaryGeneratedColumn('increment')
+  id!: number;
+
+  @Column({ "type": "bigint", "nullable": false, "unsigned": true })
+  likerId!: number
+
+  @ManyToOne(() => User, usr => usr.likedPosts, { "onDelete": "CASCADE" })
+  @JoinColumn({ "name": "likerId" })
+  likers?: import("./user.js").User[];
+
+  @Column({ "type": "bigint", "nullable": false, "unsigned": true })
+  postId!: number;
+
+  @ManyToOne(() => Post, { "onDelete": "CASCADE" })
+  @JoinColumn({ "name": "postId" })
+  posts?: Post[];
 }
