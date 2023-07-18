@@ -23,7 +23,7 @@ export class Post extends BaseEntity {
   poster?: import('./user.js').User;
 
   @OneToMany(() => PostLikes, postLike => postLike.posts)
-  likers?: import("./user.js").User[];
+  likers?: PostLikes[];
 
   @OneToMany(() => PostComment, cmt => cmt.post)
   comments?: PostComment[];

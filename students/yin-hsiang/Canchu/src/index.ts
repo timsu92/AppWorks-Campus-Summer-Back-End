@@ -31,6 +31,7 @@ import { Database } from './db/data-source.js';
 import { accessToken, userExist } from './users/auth.js';
 import { jsonContentType } from './util/util.js';
 import { createComment } from './posts/comment.js';
+import { getPostDetail } from './posts/detail.js';
 
 const app = express();
 app.use(bodyParser.json());
@@ -66,6 +67,7 @@ app.post(`/api/${env.apiVer}/posts/:id/like`, [accessToken, userExist], createLi
 app.delete(`/api/${env.apiVer}/posts/:id/like`, [accessToken], unlike);
 
 app.post(`/api/${env.apiVer}/posts/:id/comment`, [jsonContentType, accessToken, userExist], createComment);
+app.get(`/api/${env.apiVer}/posts/:id`, [accessToken, userExist], getPostDetail);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);

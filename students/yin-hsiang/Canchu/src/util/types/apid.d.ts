@@ -36,4 +36,27 @@ declare namespace Canchu {
   interface IPostObject {
     id: number
   }
+  interface IUserCommentObject {
+    id: number;
+    name: string;
+    picture: string;
+  }
+  interface ICommentObject {
+    id: number;
+    created_at: string;
+    content: string;
+    user: IUserCommentObject;
+  }
+  interface IPostDetailObject {
+    id: number;
+    created_at: string;
+    context: string;
+    summary: string;
+    is_liked: boolean;
+    like_count: number;
+    comment_count: number;
+    picture: string;
+    name: string;
+    comments: ICommentObject[];
+  }
 }
