@@ -1,6 +1,7 @@
 import express from 'express';
 import { AccessTokenSuccessBody } from '../users/auth.js';
 import { Post, PostComment } from '../db/entity/post.js';
+import { Database } from '../db/data-source.js';
 
 type oSuccess = {
   "data": {
@@ -37,15 +38,26 @@ export async function createComment(
     return;
   }
 
+  const queryRunner = Database.createQueryRunner();
+  await queryRunner.connect();
+
   let comment = new PostComment();
   comment.postId = postId;
   comment.posterId = req.body.loginUserId;
   comment.content = content;
+
+  await queryRunner.startTransaction("REPEATABLE READ");
+
   try {
-    comment = await comment.save();
+    await queryRunner.manager.save(comment);
+    await queryRunner.manager.increment(Post, { "id": postId }, "commentCount", 1);
+    await queryRunner.commitTransaction();
+    await queryRunner.release();
   } catch (err) {
     console.error(`Error when saving new comment:`, err);
+    await queryRunner.rollbackTransaction();
     res.status(500).send({ "error": "Internal database error" });
+    await queryRunner.release();
     return;
   }
   console.log(`New comment on post ${comment.postId} by ${comment.posterId}:`,
