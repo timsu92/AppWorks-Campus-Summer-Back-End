@@ -22,6 +22,7 @@ import eventRead from './events/read.js';
 
 import createPost from './posts/create.js';
 import updatePost from './posts/update.js';
+import { genCursor as genSearchCursor, searchPost } from './posts/search.js';
 
 import { createLike, unlike } from './posts/like.js';
 
@@ -61,6 +62,7 @@ app.get(`/api/${env.apiVer}/events`, [accessToken, userExist], eventGet);
 app.post(`/api/${env.apiVer}/events/:event_id/read`, [accessToken], eventRead);
 
 app.post(`/api/${env.apiVer}/posts`, [jsonContentType, accessToken, userExist], createPost);
+app.get(`/api/${env.apiVer}/posts/search`, [accessToken, userExist], genSearchCursor, searchPost);
 app.put(`/api/${env.apiVer}/posts/:id`, [accessToken], updatePost);
 
 app.post(`/api/${env.apiVer}/posts/:id/like`, [accessToken, userExist], createLike);

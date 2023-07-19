@@ -59,4 +59,15 @@ declare namespace Canchu {
     name: string;
     comments: ICommentObject[];
   }
+  interface IPostSearchObject {
+    id: number,
+    user_id: number,
+    created_at: string,
+    context: string,
+    is_liked: boolean,
+    like_count: number,
+    comment_count: number,
+    picture: string,
+    name: string
+  }
 }
