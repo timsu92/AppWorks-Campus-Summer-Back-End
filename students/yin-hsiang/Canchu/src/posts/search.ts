@@ -38,26 +38,26 @@ type oSuccess = {
 type oError = { "error": string }
 
 export async function genCursor(
-  req: express.Request<{ "user_id"?: any, "cursor"?: any }, oSuccess | oError, AccessTokenSuccessBody & { "cursor": PaginationCursor }>,
+  req: express.Request<{}, oSuccess | oError, AccessTokenSuccessBody & { "cursor": PaginationCursor }, { "user_id"?: any, "cursor"?: any }>,
   res: express.Response<oSuccess | oError>,
   next: express.NextFunction
 ) {
-  switch (typeof req.params.cursor) {
+  switch (typeof req.query.cursor) {
     case "string":
       try {
-        req.body.cursor = PaginationCursor.fromSerialized(req.params.cursor);
+        req.body.cursor = PaginationCursor.fromSerialized(req.query.cursor);
       } catch (e) {
         res.status(400).send({ "error": "Invalid cursor. Can't transform" });
         return;
       }
-      if (typeof req.params.user_id !== "undefined" && req.body.cursor.targetUserId.includes(+req.params.user_id) === false) {
+      if (typeof req.query.user_id !== "undefined" && req.body.cursor.targetUserId.includes(+req.query.user_id) === false) {
         res.status(400).send({ "error": "User_id and cursor did not match" });
         return;
       }
       next();
       break;
     case "undefined": // req.params.cursor
-      switch (typeof req.params.user_id) {
+      switch (typeof req.query.user_id) {
         case "undefined": // posts of login user and his/her friends
           const friendsOfLoginUser = (await Friendship.find({
             "select": { "receiverId": true },
@@ -80,8 +80,8 @@ export async function genCursor(
           next();
           break;
         case "string": // maybe posts of +req.params.user_id
-          if (z.number().int().nonnegative().safeParse(+req.params.user_id).success) {
-            req.body.cursor = new PaginationCursor(Number.MAX_VALUE, [+req.params.user_id]);
+          if (z.number().int().nonnegative().safeParse(+req.query.user_id).success) {
+            req.body.cursor = new PaginationCursor(Number.MAX_VALUE, [+req.query.user_id]);
             next();
             break;
           } else {
