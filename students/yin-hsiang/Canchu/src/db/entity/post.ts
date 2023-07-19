@@ -27,6 +27,9 @@ export class Post extends BaseEntity {
 
   @OneToMany(() => PostComment, cmt => cmt.post)
   comments?: PostComment[];
+
+  @Column({"type": "bigint", "nullable": false, "unsigned": true, "default": 0})
+  commentCount!: number;
 }
 
 @Entity()
