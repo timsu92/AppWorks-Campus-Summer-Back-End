@@ -29,7 +29,13 @@ export default async function (
     return;
   }
   if ([friendship.requesterId, friendship.receiverId].includes(req.body.loginUserId)) {
-    await friendship.remove();
+    try {
+      await friendship.remove();
+    } catch (err) {
+      console.log(`error removing friendship ${friendship_id}:`, err);
+      res.status(500).send({ "error": "Internal database error" });
+      return;
+    }
     if (friendship.status === "friend") {
       console.log(`user ${req.body.loginUserId} revoked friendship between ${friendship.requesterId} and ${friendship.receiverId}`);
     } else if (req.body.loginUserId === friendship.requesterId) {
