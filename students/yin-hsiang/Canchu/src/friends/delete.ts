@@ -23,36 +23,47 @@ export default async function (
     res.status(400).send({ "error": "Invalid friendship_id" });
     return;
   }
-  const friendship = await Friendship.findOneBy({ "id": friendship_id });
-  if (friendship === null) {
-    res.status(400).send({ "error": "friendship not found" });
-    return;
-  }
-  if ([friendship.requesterId, friendship.receiverId].includes(req.body.loginUserId)) {
-    try {
-      await friendship.remove();
-    } catch (err) {
-      console.log(`error removing friendship ${friendship_id}:`, err);
-      res.status(500).send({ "error": "Internal database error" });
-      return;
-    }
-    if (friendship.status === "friend") {
-      console.log(`user ${req.body.loginUserId} revoked friendship between ${friendship.requesterId} and ${friendship.receiverId}`);
-    } else if (req.body.loginUserId === friendship.requesterId) {
-      console.log(`user ${req.body.loginUserId} cancelled friendship invitation with ${friendship.receiverId}`);
-    } else {
-      console.log(`user ${req.body.loginUserId} cancelled friendship invitation with ${friendship.requesterId}`);
-    }
-    return res.status(200).send({
-      "data": {
-        "friendship": {
-          "id": friendship.id,
-          "status": friendship.status
-        }
+  const friendship = await Friendship.getRepository().manager.transaction(
+    "REPEATABLE READ",
+    async mgr => {
+      const friendship = await mgr.findOneBy(Friendship, { "id": friendship_id });
+      if (friendship === null) {
+        res.status(400).send({ "error": "friendship not found" });
+        return;
       }
-    });
-  } else {
-    res.status(403).send({ "error": "Invalid token id" });
+      if ([friendship.requesterId, friendship.receiverId].includes(req.body.loginUserId)) {
+        try {
+          await mgr.remove(friendship);
+        } catch (err) {
+          console.log(`error removing friendship ${friendship_id}:`, err);
+          res.status(500).send({ "error": "Internal database error" });
+          return;
+        }
+        if (friendship.status === "friend") {
+          console.log(`user ${req.body.loginUserId} revoked friendship between ${friendship.requesterId} and ${friendship.receiverId}`);
+        } else if (req.body.loginUserId === friendship.requesterId) {
+          console.log(`user ${req.body.loginUserId} cancelled friendship invitation with ${friendship.receiverId}`);
+        } else {
+          console.log(`user ${req.body.loginUserId} cancelled friendship invitation with ${friendship.requesterId}`);
+        }
+        return friendship;
+      } else {
+        res.status(403).send({ "error": "Invalid token id" });
+        return;
+      }
+    }
+  );
+
+  if (friendship === undefined) {
     return;
   }
+
+  return res.status(200).send({
+    "data": {
+      "friendship": {
+        "id": friendship.id,
+        "status": friendship.status
+      }
+    }
+  });
 }

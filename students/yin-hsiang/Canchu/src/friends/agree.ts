@@ -28,42 +28,45 @@ export default async function (
   const friendshipId = +req.params.friendship_id;
   const receiverId = req.body.loginUserId;
 
-  const friendship = await Friendship.getRepository().manager.transaction("REPEATABLE READ", async mgr => {
-    // friendship => "friend"
-    let friendship = await mgr.findOneBy(Friendship, { "id": friendshipId });
-    if (friendship === null) {
-      res.status(400).send({ "error": "friendship request not performed" });
-      return;
-    }
-    if (receiverId !== friendship.receiverId) {
-      res.status(400).send({ "error": "Permission denied" });
-      return;
-    }
-    if (friendship.status === "friend") {
-      res.status(400).send({ "error": "already friends" });
-      return;
-    }
-    friendship.status = "friend";
-    try {
-      friendship = await mgr.save(friendship);
-    } catch (err) {
-      res.status(500).send({ "error": "internal database error" });
-      console.error("error while updating friendship:", err);
-      return;
-    }
+  const friendship = await Friendship.getRepository().manager.transaction(
+    "REPEATABLE READ",
+    async mgr => {
+      // friendship => "friend"
+      let friendship = await mgr.findOneBy(Friendship, { "id": friendshipId });
+      if (friendship === null) {
+        res.status(400).send({ "error": "friendship request not performed" });
+        return;
+      }
+      if (receiverId !== friendship.receiverId) {
+        res.status(400).send({ "error": "Permission denied" });
+        return;
+      }
+      if (friendship.status === "friend") {
+        res.status(400).send({ "error": "already friends" });
+        return;
+      }
+      friendship.status = "friend";
+      try {
+        friendship = await mgr.save(friendship);
+      } catch (err) {
+        res.status(500).send({ "error": "internal database error" });
+        console.error("error while updating friendship:", err);
+        return;
+      }
 
-    // add friendCount
-    try {
-      await mgr.increment(User, { "id": Equal(friendship.requesterId) }, "friendCount", 1);
-      await mgr.increment(User, { "id": friendship.receiverId }, "friendCount", 1);
-    } catch (err) {
-      console.error("Error while increasing friend count:", err);
-      res.status(500).send({ "error": "Internal database error" });
-      return;
-    }
+      // add friendCount
+      try {
+        await mgr.increment(User, { "id": Equal(friendship.requesterId) }, "friendCount", 1);
+        await mgr.increment(User, { "id": friendship.receiverId }, "friendCount", 1);
+      } catch (err) {
+        console.error("Error while increasing friend count:", err);
+        res.status(500).send({ "error": "Internal database error" });
+        return;
+      }
 
-    return friendship;
-  });
+      return friendship;
+    }
+  );
 
   if (friendship === undefined)
     return;
