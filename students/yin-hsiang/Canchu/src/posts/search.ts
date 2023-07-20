@@ -115,6 +115,7 @@ export async function searchPost(
         "name": true, "picture": true
       },
       "likers": {
+        "id": true, // don't know why this is required
         "likerId": true,
       },
     },

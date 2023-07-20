@@ -44,6 +44,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Post, post => post.poster)
   posts?: import("./post.js").Post[];
 
-  @OneToMany(() => PostLikes, postlike => postlike.likers)
+  @OneToMany(() => PostLikes, postlike => postlike.liker)
   likedPosts?: import("./post.js").PostLikes[];
 }

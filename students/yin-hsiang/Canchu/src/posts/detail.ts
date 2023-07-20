@@ -41,6 +41,7 @@ export async function getPostDetail(
         }
       },
       "likers": {
+        "id": true, // don't know why this is required
         "likerId": true
       }
     }

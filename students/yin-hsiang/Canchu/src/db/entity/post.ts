@@ -22,7 +22,7 @@ export class Post extends BaseEntity {
   @JoinColumn({ "name": "posterId" })
   poster?: import('./user.js').User;
 
-  @OneToMany(() => PostLikes, postLike => postLike.posts)
+  @OneToMany(() => PostLikes, postLike => postLike.post)
   likers?: PostLikes[];
 
   @OneToMany(() => PostComment, cmt => cmt.post)
@@ -42,14 +42,14 @@ export class PostLikes extends BaseEntity {
 
   @ManyToOne(() => User, usr => usr.likedPosts, { "onDelete": "CASCADE" })
   @JoinColumn({ "name": "likerId" })
-  likers?: import("./user.js").User[];
+  liker?: import("./user.js").User;
 
   @Column({ "type": "bigint", "nullable": false, "unsigned": true })
   postId!: number;
 
   @ManyToOne(() => Post, { "onDelete": "CASCADE" })
   @JoinColumn({ "name": "postId" })
-  posts?: Post[];
+  post?: Post;
 }
 
 @Entity()
