@@ -36,9 +36,8 @@ export default async function (
       LEFT JOIN friendship ON (friendship.requesterId = user.id AND friendship.receiverId = ?)
                            OR (friendship.requesterId = ? AND friendship.receiverId = user.id)
       WHERE
-        user.name LIKE ?
-        AND user.id != ?`,
-      [userId, userId, userId, userId, `%${keyword}%`, userId],
+        user.name LIKE ?`,
+      [userId, userId, userId, userId, `%${keyword}%`],
       function (err, _result, fields) {
         if (err) {
           res.status(500).send({ "error": "Internal database error" });
