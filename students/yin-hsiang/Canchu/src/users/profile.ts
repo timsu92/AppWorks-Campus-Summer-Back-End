@@ -54,7 +54,7 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
           "id": usr.id,
           "name": usr.name,
           "picture": usr.picture,
-          "friend_count": 0, // TODO: get friend count <20-07-23, timsu92> //
+          "friend_count": usr.friendCount,
           "introduction": usr.introduction,
           "tags": usr.tags,
           "friendship": friendship === null
