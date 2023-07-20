@@ -39,12 +39,13 @@ export default async function (
           res.status(500).send({ "error": "Internal database error" });
           return;
         }
-        if (friendship.status === "friend") {
-          console.log(`user ${req.body.loginUserId} revoked friendship between ${friendship.requesterId} and ${friendship.receiverId}`);
-        } else if (req.body.loginUserId === friendship.requesterId) {
-          console.log(`user ${req.body.loginUserId} cancelled friendship invitation with ${friendship.receiverId}`);
+        if (friendship.status === "requested") {
+          if (req.body.loginUserId === friendship.requesterId)
+            console.log(`user ${req.body.loginUserId} cancelled friendship invitation with ${friendship.receiverId}`);
+          else
+            console.log(`user ${req.body.loginUserId} cancelled friendship invitation with ${friendship.requesterId}`);
         } else {
-          console.log(`user ${req.body.loginUserId} cancelled friendship invitation with ${friendship.requesterId}`);
+          console.log(`user ${req.body.loginUserId} revoked friendship between ${friendship.requesterId} and ${friendship.receiverId}`);
         }
         return friendship;
       } else {
