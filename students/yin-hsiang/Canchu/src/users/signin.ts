@@ -46,6 +46,7 @@ export default function (req: express.Request, res: express.Response<oSuccess | 
             return;
           }
           if (await bcrypt.compare(parsedData.password, usr.password)) {
+            console.log(`user ${usr.id} logged in`);
             res.status(200).send({
               "data": {
                 "access_token": await jwt.encode({ "id": usr.id }),

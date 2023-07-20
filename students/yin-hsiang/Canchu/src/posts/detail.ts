@@ -49,6 +49,7 @@ export async function getPostDetail(
     res.status(400).send({ "error": "Post not found" });
     return;
   }
+  console.log(`get post ${postId}'s detail'`);
   res.status(200).send({
     "data": {
       "post": {

@@ -129,6 +129,11 @@ export async function searchPost(
     "cache": 60000, // 1 minute
   });
 
+  console.log(
+    `user ${req.body.loginUserId} searched post of`,
+    req.body.cursor.targetUserId.length === 1 ? req.body.cursor.targetUserId[0] : "self",
+    "with cursor = ", req.body.cursor
+  )
   return res.status(200).send({
     "data": {
       "posts": posts.slice(0, 10).map(post => {

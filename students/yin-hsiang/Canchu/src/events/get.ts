@@ -18,6 +18,7 @@ export default async function (
     },
     "relations": ["participant", "friendship"]
   });
+  console.log(`user ${req.body.loginUserId} viewed events`);
   res.status(200).send({
     "data": {
       "events": events.map(ev => {

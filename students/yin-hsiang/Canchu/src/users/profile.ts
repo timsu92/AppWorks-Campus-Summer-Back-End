@@ -63,6 +63,7 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
                   res.status(404).send({ "error": "user not found" });
                   return;
                 }
+                console.log(`user ${usrDetailObjs[0].id}'s profile was got`)
                 res.status(200).send({ "data": { "user": usrDetailObjs[0] } });
                 next();
               }
@@ -130,7 +131,7 @@ export function updateUserProfile(sql: mysql.Connection | mysql.Pool) {
           res.status(403).send({ "error": "Wrong token" });
         } else {
           res.status(200).send({ "data": { "user": { "id": payload.id } } });
-          console.log(`user with id ${payload.id} changed profile to ${body.data}`);
+          console.log(`user with id ${payload.id} changed profile to`, body.data);
           next();
         }
       })

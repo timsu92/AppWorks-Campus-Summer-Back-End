@@ -53,6 +53,7 @@ export default async function (
             "friendshipId": number,
             "relationship": "friend" | "requested" | "pending" | null
           }[];
+          console.log(`searched user with keyword=${keyword}`);
           res.status(200).send({
             "data": {
               "users": result.map(record => {
