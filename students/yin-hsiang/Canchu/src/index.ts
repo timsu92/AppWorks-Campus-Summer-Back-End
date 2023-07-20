@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mysql from 'mysql2';
 import "reflect-metadata";
+import cors from 'cors';
 
 import env from '../.env.json' assert { type: "json" };
 // routes
@@ -35,9 +36,18 @@ import { Database } from './db/data-source.js';
 import { accessToken, userExist } from './users/auth.js';
 import { jsonContentType } from './util/util.js';
 
+// global config
+const corsOptions: cors.CorsOptions = {
+  "origin": env.frontendAddr,
+  "methods": "GET,PUT,POST,DELETE",
+  "allowedHeaders": ["Authorization", "Content-Type"]
+}
+const port = 3000;
+
+//
 const app = express();
 app.use(bodyParser.json());
-const port = 3000;
+app.use(cors(corsOptions)); // handles all CORS on all routes and processes CORS pre-flight
 const sql = mysql.createPool(env.sqlCfgOld);
 await Database.initialize();
 
