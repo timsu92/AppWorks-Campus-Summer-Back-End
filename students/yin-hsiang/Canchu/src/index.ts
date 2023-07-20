@@ -57,7 +57,7 @@ app.get('/', function (req, res) {
 
 app.post(`/api/${env.apiVer}/users/signup`, signup);
 app.post(`/api/${env.apiVer}/users/signin`, signin);
-app.get(`/api/${env.apiVer}/users/:id/profile`, getUserProfile(sql));
+app.get(`/api/${env.apiVer}/users/:id/profile`, [accessToken, userExist], getUserProfile(sql));
 app.put(`/api/${env.apiVer}/users/profile`, updateUserProfile(sql));
 app.use('/images', express.static('static/avatar'));
 app.put(`/api/${env.apiVer}/users/picture`, changePicture);

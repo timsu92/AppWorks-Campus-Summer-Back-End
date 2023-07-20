@@ -4,6 +4,7 @@ import jose from 'jose';
 import z from "zod";
 
 import * as jwt from './jwt.js';
+import { AccessTokenSuccessBody } from './auth.js';
 
 export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
   type oSuccess = {
@@ -16,63 +17,39 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
     "error": string
   }
 
-  return async function (req: express.Request, res: express.Response<oSuccess | oError>, next: express.NextFunction): Promise<void> {
+  return async function (
+    req: express.Request<{ "id": any }, oSuccess | oError, AccessTokenSuccessBody>,
+    res: express.Response<oSuccess | oError>,
+    next: express.NextFunction
+  ) {
     if (Number.isNaN(+req.params.id)) {
       res.status(400).send({ "error": "invalid id" });
       return;
     }
-    const access_token = (req.headers["authorization"] ?? "").match(/(?<=^Bearer ).+/)?.[0];
-    if (access_token === undefined) {
-      res.status(401).send({ "error": "No token" });
-      return;
-    }
-    try {
-      const payload = (await jwt.decode(access_token)).payload as { "id": number } & jose.JWTPayload;
-      if (!z.number().nonnegative().int().safeParse(payload.id).success) {
-        res.status(403).send({ "error": "Wrong token" });
-      } else {
-        sql.query("SELECT id FROM user WHERE id=?",
-          [payload.id],
-          function (err, result, fields) {
-            if (err) {
-              res.status(500).send({ "error": "internal database error" });
-              console.error(`error while executing SELECT id,name,picture,friend_count,introduction,tags,friendship FROM user WHERE id=${payload.id}`);
-              return;
-            }
-            const qryResult = result as {"id": number}[];
-            if(qryResult.length !== 1){
-              res.status(403).send({"error": "invalid token"});
-              return;
-            }
-            sql.query("SELECT id,name,picture,introduction,tags FROM user WHERE id=?",
-              [req.params.id],
-              function (err, result, fields) {
-                if (err) {
-                  res.status(500).send({ "error": "internal database error" });
-                  console.error(`error while executing "SELECT id,name,picture,introduction,tags FROM user WHERE id=${req.params.id}"`);
-                  return;
-                }
-                const usrDetailObjs = (result as Canchu.IUserDetailObject[]).map(fakeObj => {
-                  return {
-                    ...fakeObj,
-                    "friend_count": 0,
-                    "friendship": null
-                  }
-                });
-                if (usrDetailObjs.length !== 1) {
-                  res.status(404).send({ "error": "user not found" });
-                  return;
-                }
-                console.log(`user ${usrDetailObjs[0].id}'s profile was got`)
-                res.status(200).send({ "data": { "user": usrDetailObjs[0] } });
-                next();
-              }
-            )
-          })
+    sql.query("SELECT id,name,picture,introduction,tags FROM user WHERE id=?",
+      [req.params.id],
+      function (err, result, fields) {
+        if (err) {
+          res.status(500).send({ "error": "internal database error" });
+          console.error(`error while executing "SELECT id,name,picture,introduction,tags FROM user WHERE id=${req.params.id}"`);
+          return;
+        }
+        const usrDetailObjs = (result as Canchu.IUserDetailObject[]).map(fakeObj => {
+          return {
+            ...fakeObj,
+            "friend_count": 0,
+            "friendship": null
+          }
+        });
+        if (usrDetailObjs.length !== 1) {
+          res.status(404).send({ "error": "user not found" });
+          return;
+        }
+        console.log(`user ${usrDetailObjs[0].id}'s profile was got`)
+        res.status(200).send({ "data": { "user": usrDetailObjs[0] } });
+        next();
       }
-    } catch (err) {
-      res.status(403).send({ "error": "Can't parse token" });
-    }
+    )
   }
 }
 
@@ -105,9 +82,9 @@ export function updateUserProfile(sql: mysql.Connection | mysql.Pool) {
       res.status(401).send({ "error": "No token" });
       return;
     }
-    let payload = {"id": 0};
+    let payload = { "id": 0 };
     try {
-      payload = (await jwt.decode(access_token)).payload as {"id": number} & jose.JWTPayload;
+      payload = (await jwt.decode(access_token)).payload as { "id": number } & jose.JWTPayload;
     } catch (err) {
       res.status(403).send({ "error": "Can't parse token" });
       return;
