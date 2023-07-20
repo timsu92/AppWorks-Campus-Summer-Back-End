@@ -48,7 +48,7 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
       ]
     }));
     console.log(`user ${targetUserId}'s profile was got'`);
-    res.status(200).send({
+    return res.status(200).send({
       "data": {
         "user": {
           "id": usr.id,
@@ -68,7 +68,6 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
         }
       }
     });
-    next();
   }
 }
 
