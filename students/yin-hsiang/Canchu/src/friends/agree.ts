@@ -60,6 +60,7 @@ export default async function (
         await mgr.increment(User, { "id": friendship.receiverId }, "friendCount", 1);
       } catch (err) {
         console.error("Error while increasing friend count:", err);
+        await mgr.queryRunner?.rollbackTransaction();
         res.status(500).send({ "error": "Internal database error" });
         return;
       }
