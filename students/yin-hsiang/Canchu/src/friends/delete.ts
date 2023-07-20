@@ -37,7 +37,7 @@ export default async function (
     } else {
       console.log(`user ${req.body.loginUserId} cancelled friendship invitation with ${friendship.requesterId}`);
     }
-    res.status(200).send({
+    return res.status(200).send({
       "data": {
         "friendship": {
           "id": friendship.id,
@@ -45,7 +45,6 @@ export default async function (
         }
       }
     });
-    next();
   } else {
     res.status(403).send({ "error": "Invalid token id" });
     return;
