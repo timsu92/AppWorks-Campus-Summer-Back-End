@@ -46,4 +46,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => PostLikes, postlike => postlike.liker)
   likedPosts?: import("./post.js").PostLikes[];
+
+  @Column({"type": "int", "nullable": false, "unsigned": true, "default": 0})
+  friendCount!: number;
 }
