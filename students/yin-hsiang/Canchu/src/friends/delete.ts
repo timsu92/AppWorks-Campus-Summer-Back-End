@@ -1,6 +1,7 @@
 import express from 'express';
 
 import { Friendship } from '../db/entity/friendship.js';
+import { User } from '../db/entity/user.js';
 import { AccessTokenSuccessBody } from '../users/auth.js';
 
 type oSuccess = {
@@ -35,7 +36,7 @@ export default async function (
         try {
           await mgr.remove(friendship);
         } catch (err) {
-          console.log(`error removing friendship ${friendship_id}:`, err);
+          console.error(`error removing friendship ${friendship_id}:`, err);
           res.status(500).send({ "error": "Internal database error" });
           return;
         }
@@ -46,6 +47,15 @@ export default async function (
             console.log(`user ${req.body.loginUserId} cancelled friendship invitation with ${friendship.requesterId}`);
         } else {
           console.log(`user ${req.body.loginUserId} revoked friendship between ${friendship.requesterId} and ${friendship.receiverId}`);
+          try {
+            await mgr.decrement(User, { "id": friendship.requesterId }, "friendCount", 1);
+            await mgr.decrement(User, { "id": friendship.receiverId }, "friendCount", 1);
+          } catch (err) {
+            console.error(`Error decreasing friend count:`, err);
+            await mgr.queryRunner?.rollbackTransaction();
+            res.status(500).send({ "error": "Internal database error" });
+            return;
+          }
         }
         return friendship;
       } else {
