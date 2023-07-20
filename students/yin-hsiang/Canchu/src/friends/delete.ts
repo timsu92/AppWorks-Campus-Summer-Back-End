@@ -28,41 +28,26 @@ export default async function (
     res.status(400).send({ "error": "friendship not found" });
     return;
   }
-  if (friendship.status === "friend") {
-    if ([friendship.requesterId, friendship.receiverId].includes(req.body.loginUserId)) {
-      await friendship.remove();
+  if ([friendship.requesterId, friendship.receiverId].includes(req.body.loginUserId)) {
+    await friendship.remove();
+    if (friendship.status === "friend") {
       console.log(`user ${req.body.loginUserId} revoked friendship between ${friendship.requesterId} and ${friendship.receiverId}`);
-      res.status(200).send({
-        "data": {
-          "friendship": {
-            "id": friendship.id,
-            "status": friendship.status
-          }
-        }
-      });
-      next();
+    } else if (req.body.loginUserId === friendship.requesterId) {
+      console.log(`user ${req.body.loginUserId} cancelled friendship invitation with ${friendship.receiverId}`);
     } else {
-      res.status(403).send({ "error": "Invalid token id" });
-      return;
+      console.log(`user ${req.body.loginUserId} cancelled friendship invitation with ${friendship.requesterId}`);
     }
+    res.status(200).send({
+      "data": {
+        "friendship": {
+          "id": friendship.id,
+          "status": friendship.status
+        }
+      }
+    });
+    next();
   } else {
-    if (req.body.loginUserId === friendship.requesterId) {
-      await friendship.remove();
-      console.log(`${req.body.loginUserId} remove friendship with ${friendship.receiverId}`);
-      res.status(200).send({
-        "data": {
-          "friendship": {
-            "id": friendship.id,
-            "status": friendship.status
-          }
-        }
-      });
-      next();
-    } else if (req.body.loginUserId === friendship.receiverId) {
-      res.status(403).send({ "error": "can't deny invitation" });
-      return;
-    } else {
-      res.status(403).send({ "error": "Invalid token id" });
-    }
+    res.status(403).send({ "error": "Invalid token id" });
+    return;
   }
 }
