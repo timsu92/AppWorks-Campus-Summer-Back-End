@@ -26,27 +26,31 @@ export default async function (
   const friendshipId = +req.params.friendship_id;
   const receiverId = req.body.loginUserId;
 
-  let friendship = await Friendship.findOneBy({ "id": friendshipId });
-  if (friendship === null) {
-    res.status(400).send({ "error": "friendship request not performed" });
+  const friendship = await Friendship.getRepository().manager.transaction(async mgr => {
+    const friendship = await mgr.findOneBy(Friendship, { "id": friendshipId });
+    if (friendship === null) {
+      res.status(400).send({ "error": "friendship request not performed" });
+      return;
+    }
+    if (receiverId !== friendship.receiverId) {
+      res.status(400).send({ "error": "Permission denied" });
+      return;
+    }
+    if (friendship.status === "friend") {
+      res.status(400).send({ "error": "already friends" });
+      return;
+    }
+    friendship.status = "friend";
+    try {
+      return await mgr.save(friendship);
+    } catch (err) {
+      res.status(500).send({ "error": "internal database error" });
+      console.error("error while updating friendship:", err);
+      return;
+    }
+  });
+  if (friendship === undefined)
     return;
-  }
-  if (receiverId !== friendship.receiverId) {
-    res.status(400).send({ "error": "Permission denied" });
-    return;
-  }
-  if (friendship.status === "friend") {
-    res.status(400).send({ "error": "already friends" });
-    return;
-  }
-  friendship.status = "friend";
-  try {
-    friendship = await friendship.save();
-  } catch (err) {
-    res.status(500).send({ "error": "internal database error" });
-    console.error("error while updating friendship:", err);
-    return;
-  }
 
   const notification = new Event_();
   notification.type = "friend_request";
