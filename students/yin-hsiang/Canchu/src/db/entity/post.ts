@@ -15,7 +15,7 @@ export class Post extends BaseEntity {
   @Column({ "type": "varchar", "nullable": true, "length": 255 })
   summary?: string;
 
-  @Column({ "type": "bigint", "nullable": false, "unsigned": false })
+  @Column({ "type": "bigint", "nullable": false, "unsigned": true })
   posterId!: number;
 
   @ManyToOne(() => User, usr => usr.posts, { "onDelete": "CASCADE" })
