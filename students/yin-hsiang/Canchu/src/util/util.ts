@@ -7,7 +7,7 @@ export function date2CanchuStr(timestamp: Date) {
   const year = localTime.getFullYear();
   const month = (localTime.getMonth() + 1).toString().padStart(2, '0');
   const date = localTime.getDate().toString().padStart(2, '0');
-  const hour = (localTime.getHours()).toString().padStart(2, '0');
+  const hour = (localTime.getHours() + 8).toString().padStart(2, '0'); // workaround for EC2 not in UTC+8
   const minute = localTime.getMinutes().toString().padStart(2, '0');
   const second = localTime.getSeconds().toString().padStart(2, '0');
   return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
