@@ -22,16 +22,18 @@ import eventRead from './events/read.js';
 
 import createPost from './posts/create.js';
 import updatePost from './posts/update.js';
+import { getPostDetail } from './posts/detail.js';
+import { genCursor as genSearchCursor, searchPost } from './posts/search.js';
 
 import { createLike, unlike } from './posts/like.js';
+
+import { createComment } from './posts/comment.js';
 
 // database
 import { Database } from './db/data-source.js';
 // utils
 import { accessToken, userExist } from './users/auth.js';
 import { jsonContentType } from './util/util.js';
-import { createComment } from './posts/comment.js';
-import { getPostDetail } from './posts/detail.js';
 
 const app = express();
 app.use(bodyParser.json());
@@ -61,13 +63,14 @@ app.get(`/api/${env.apiVer}/events`, [accessToken, userExist], eventGet);
 app.post(`/api/${env.apiVer}/events/:event_id/read`, [accessToken], eventRead);
 
 app.post(`/api/${env.apiVer}/posts`, [jsonContentType, accessToken, userExist], createPost);
+app.get(`/api/${env.apiVer}/posts/search`, [accessToken, userExist], genSearchCursor, searchPost);
 app.put(`/api/${env.apiVer}/posts/:id`, [accessToken], updatePost);
+app.get(`/api/${env.apiVer}/posts/:id`, [accessToken, userExist], getPostDetail);
 
 app.post(`/api/${env.apiVer}/posts/:id/like`, [accessToken, userExist], createLike);
 app.delete(`/api/${env.apiVer}/posts/:id/like`, [accessToken], unlike);
 
 app.post(`/api/${env.apiVer}/posts/:id/comment`, [jsonContentType, accessToken, userExist], createComment);
-app.get(`/api/${env.apiVer}/posts/:id`, [accessToken, userExist], getPostDetail);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);

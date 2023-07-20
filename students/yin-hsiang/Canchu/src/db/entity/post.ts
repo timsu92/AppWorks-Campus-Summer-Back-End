@@ -27,6 +27,9 @@ export class Post extends BaseEntity {
 
   @OneToMany(() => PostComment, cmt => cmt.post)
   comments?: PostComment[];
+
+  @Column({ "type": "int", "width": 32, "nullable": false, "unsigned": true, "default": 0 })
+  commentCount!: number;
 }
 
 @Entity()
@@ -54,21 +57,21 @@ export class PostComment extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id!: number;
 
-  @Column({"type": "bigint", "nullable": false, "unsigned": true})
+  @Column({ "type": "bigint", "nullable": false, "unsigned": true })
   posterId!: number;
 
   @ManyToOne(() => User)
   poster?: import("./user.js").User;
 
-  @Column({"type": "bigint", "nullable": false, "unsigned": true})
+  @Column({ "type": "bigint", "nullable": false, "unsigned": true })
   postId!: number;
 
   @ManyToOne(() => Post, post => post.comments)
   post?: Post;
 
-  @Column({"type": "datetime", "nullable": false, "default": "CURRENT_TIMESTAMP"})
+  @Column({ "type": "datetime", "nullable": false, "default": "CURRENT_TIMESTAMP" })
   createdAt!: Date;
 
-  @Column({"type": "varchar", "nullable": false, "length": 500})
+  @Column({ "type": "varchar", "nullable": false, "length": 500 })
   content!: string;
 }
