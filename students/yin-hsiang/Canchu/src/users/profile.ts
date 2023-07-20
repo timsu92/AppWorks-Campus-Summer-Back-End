@@ -32,7 +32,7 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
     }
     const usr = await User.findOne({
       "select": {
-        "id": true, "name": true, "picture": true, "introduction": true, "tags": true,
+        "id": true, "name": true, "picture": true, "introduction": true, "tags": true, "friendCount": true
       },
       "where": { "id": Equal(targetUserId) },
     });
