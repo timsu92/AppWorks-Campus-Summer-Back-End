@@ -38,7 +38,7 @@ import { jsonContentType } from './util/util.js';
 
 // global config
 const corsOptions: cors.CorsOptions = {
-  "origin": env.frontendAddr,
+  "origin": "https://" + env.frontendAddr,
   "methods": "GET,PUT,POST,DELETE",
   "allowedHeaders": ["Authorization", "Content-Type"]
 }
