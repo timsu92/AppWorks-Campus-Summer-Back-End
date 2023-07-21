@@ -48,7 +48,7 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
         { "requesterId": Equal(req.body.loginUserId), "receiverId": Equal(targetUserId) },
       ]
     }));
-    console.log(`user ${targetUserId}'s profile was got'`);
+    console.log(`user ${targetUserId}'s profile was got`);
     return res.status(200).send({
       "data": {
         "user": {
