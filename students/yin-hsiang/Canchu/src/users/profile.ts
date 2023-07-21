@@ -8,6 +8,7 @@ import { User } from '../db/entity/user.js';
 import { Friendship } from '../db/entity/friendship.js';
 import * as jwt from './jwt.js';
 import { AccessTokenSuccessBody } from './auth.js';
+import { convertUserPicture } from '../util/util.js';
 
 export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
   type oSuccess = {
@@ -53,7 +54,7 @@ export function getUserProfile(sql: mysql.Connection | mysql.Pool) {
         "user": {
           "id": usr.id,
           "name": usr.name,
-          "picture": usr.picture,
+          "picture": convertUserPicture(usr.picture),
           "friend_count": usr.friendCount,
           "introduction": usr.introduction,
           "tags": usr.tags,

@@ -1,6 +1,8 @@
 import express from 'express';
-import { AccessTokenSuccessBody } from '../users/auth.js';
+
 import { Friendship } from '../db/entity/friendship.js';
+import { AccessTokenSuccessBody } from '../users/auth.js';
+import { convertUserPicture } from '../util/util.js';
 
 type oSuccess = {
   "data": {
@@ -25,7 +27,7 @@ export default async function (
         return {
           "id": relation.requester!.id,
           "name": relation.requester!.name,
-          "picture": relation.requester!.picture,
+          "picture": convertUserPicture(relation.requester!.picture),
           "friendship": {
             "id": relation.id,
             "status": "pending"

@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import * as jwt from "./jwt.js";
 import { QueryFailedError } from "typeorm";
 import { User } from "../db/entity/user.js";
+import { convertUserPicture } from "../util/util.js";
 
 type oSuccess = {
   "data": {
@@ -55,7 +56,7 @@ export default function (req: express.Request, res: express.Response<oSuccess | 
                   "name": usr.name,
                   "email": usr.email,
                   "provider": usr.provider,
-                  "picture": usr.picture
+                  "picture": convertUserPicture(usr.picture)
                 }
               }
             });

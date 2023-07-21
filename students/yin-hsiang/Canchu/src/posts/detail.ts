@@ -2,7 +2,7 @@ import express from 'express';
 
 import { AccessTokenSuccessBody } from '../users/auth.js';
 import { Post } from '../db/entity/post.js';
-import { date2CanchuStr } from '../util/util.js';
+import { convertUserPicture, date2CanchuStr } from '../util/util.js';
 
 type oSuccess = { "data": { "post": Canchu.IPostDetailObject } }
 type oError = { "error": string }
@@ -62,7 +62,7 @@ export async function getPostDetail(
         "is_liked": post.likers!.some(postLike => postLike.likerId === req.body.loginUserId),
         "like_count": post.likers!.length,
         "comment_count": post.comments!.length,
-        "picture": post.poster!.picture,
+        "picture": convertUserPicture(post.poster!.picture),
         "name": post.poster!.name,
         "comments": post.comments!.map(cmt => {
           return {
@@ -72,7 +72,7 @@ export async function getPostDetail(
             "user": {
               "id": cmt.poster!.id,
               "name": cmt.poster!.name,
-              "picture": cmt.poster!.picture
+              "picture": convertUserPicture(cmt.poster!.picture)
             }
           };
         })

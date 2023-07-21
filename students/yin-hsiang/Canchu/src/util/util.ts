@@ -1,5 +1,7 @@
 import express from 'express';
 
+import env from '../../.env.json' assert {type: "json"};
+
 const jetlagMillisecond = 1000 * 60 * (new Date().getTimezoneOffset() * -1);
 
 export function date2CanchuStr(timestamp: Date) {
@@ -23,4 +25,8 @@ export function jsonContentType(
     return;
   }
   next();
+}
+
+export function convertUserPicture (pictureInDB: string): Canchu.UserPicture {
+  return `https://${env.frontendAddr}/images/${pictureInDB}`;
 }
