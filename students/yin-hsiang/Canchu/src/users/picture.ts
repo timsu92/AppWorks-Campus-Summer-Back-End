@@ -67,16 +67,15 @@ export default async function (req: express.Request, res: express.Response<oSucc
         res.status(403).send({ "error": "invalid token id" });
         return;
       }
-      User.update({ "id": payload.id }, { "picture": file.filename })
-        .then(async (updateResult) => {
-          res.status(200).send({ "data": { "picture": convertUserPicture(file.filename) } });
-          console.log(`user with id ${payload.id} changed picture to ${file.filename}`);
-          await rm('../../static/avatar/' + oldUsr.picture)
-        })
-        .catch((err) => {
-          res.status(500).send({ "error": "internal database error" });
-          console.error(`error while updating user picture\n${err}`);
-        })
+      try {
+        await User.update({ "id": payload.id }, { "picture": file.filename });
+      } catch (err) {
+        res.status(500).send({ "error": "internal database error" });
+        console.error(`error while updating user picture\n${err}`);
+      }
+      res.status(200).send({ "data": { "picture": convertUserPicture(file.filename) } });
+      console.log(`user with id ${payload.id} changed picture to ${file.filename}`);
+      await rm('../../static/avatar/' + oldUsr.picture)
     }
   })
 }
