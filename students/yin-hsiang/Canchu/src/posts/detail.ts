@@ -27,7 +27,7 @@ export async function getPostDetail(
       "poster": true,
     },
     "select": {
-      "id": true, "createdAt": true, "context": true, "summary": true,
+      "id": true, "createdAt": true, "context": true, "summary": true, "posterId": true,
       "poster": {
         "name": true,
         "picture": true
@@ -55,6 +55,7 @@ export async function getPostDetail(
     "data": {
       "post": {
         "id": post.id,
+        "user_id": post.posterId,
         "created_at": date2CanchuStr(post.createdAt),
         "context": post.context,
         "summary": post.summary ?? "", // nowhere found its usage yet
