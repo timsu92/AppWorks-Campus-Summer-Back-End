@@ -6,6 +6,7 @@ import z from 'zod';
 import * as jwt from './jwt.js';
 import { User } from '../db/entity/user.js';
 import { convertUserPicture } from '../util/util.js';
+import { rm } from 'fs/promises';
 
 type oSuccess = {
   "data": {
@@ -42,7 +43,7 @@ export default async function (req: express.Request, res: express.Response<oSucc
     res.status(403).send({ "error": "invalid token format" });
     return;
   }
-  uploader(req, res, function (err) {
+  uploader(req, res, async function (err) {
     if (err) {
       if (err instanceof multer.MulterError) {
         res.status(400).send({ "error": err.message });
@@ -57,12 +58,21 @@ export default async function (req: express.Request, res: express.Response<oSucc
       res.status(400).send({ "error": "did not upload file correctly" });
     } else {
       const file = req.file;
+      const oldUsr = await User.findOne({
+        "select": { "picture": true },
+        "where": { "id": payload.id },
+        "lock": { "mode": "pessimistic_partial_write" }
+      });
+      if (oldUsr === null) {
+        res.status(403).send({ "error": "invalid token id" });
+        return;
+      }
       User.update({ "id": payload.id }, { "picture": file.filename })
-        .then((updateResult) => {
+        .then(async (updateResult) => {
           if (updateResult.affected === 1) {
             res.status(200).send({ "data": { "picture": convertUserPicture(file.filename) } });
             console.log(`user with id ${payload.id} changed picture to ${file.filename}`);
-            next();
+            await rm('../../static/avatar/' + oldUsr.picture)
           } else {
             res.status(403).send({ "error": "invalid token id" });
           }
