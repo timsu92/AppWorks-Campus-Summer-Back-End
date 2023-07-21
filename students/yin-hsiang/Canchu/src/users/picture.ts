@@ -75,7 +75,13 @@ export default async function (req: express.Request, res: express.Response<oSucc
       }
       res.status(200).send({ "data": { "picture": convertUserPicture(file.filename) } });
       console.log(`user with id ${payload.id} changed picture to ${file.filename}`);
-      await rm('../../static/avatar/' + oldUsr.picture)
+      await rm('../../static/avatar/' + oldUsr.picture, {
+        "force": true,
+        "retryDelay": 300,
+        "maxRetries": 3,
+        "recursive": true
+      });
+      console.log(`user with id ${payload.id}'s old picture is removed`);
     }
   })
 }
