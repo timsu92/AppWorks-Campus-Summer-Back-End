@@ -60,7 +60,7 @@ export default async function (req: express.Request, res: express.Response<oSucc
       User.update({ "id": payload.id }, { "picture": `images/${file.filename}` })
         .then((updateResult) => {
           if (updateResult.affected === 1) {
-            res.status(200).send({ "data": { "picture": `http://${env.sqlCfg.host}/images/${file.filename}` } });
+            res.status(200).send({ "data": { "picture": `https://${env.sqlCfg.host}/images/${file.filename}` } });
             console.log(`user with id ${payload.id} changed picture to /images/${file.filename}`);
             next();
           } else {
