@@ -16,7 +16,8 @@ export default async function (
     "where": {
       "ownerId": req.body.loginUserId
     },
-    "relations": ["participant", "friendship"]
+    "relations": ["participant", "friendship"],
+    "order": {"createdAt": "DESC"},
   });
   console.log(`user ${req.body.loginUserId} viewed events`);
   res.status(200).send({
