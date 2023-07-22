@@ -8,7 +8,8 @@ import env from '../.env.json' assert { type: "json" };
 // routes
 import signup from './users/signup.js';
 import signin from './users/signin.js';
-import { getUserProfile, updateUserProfile } from './users/profile.js';
+import { updateUserProfile } from './users/profile.js';
+import { getUserProfile } from './users/profile/get.js';
 import changePicture from './users/picture.js';
 import searchUser from './users/search.js';
 
@@ -57,7 +58,7 @@ app.get('/', function (req, res) {
 
 app.post(`/api/${env.apiVer}/users/signup`, signup);
 app.post(`/api/${env.apiVer}/users/signin`, signin);
-app.get(`/api/${env.apiVer}/users/:id/profile`, [accessToken, userExist], getUserProfile(sql));
+app.get(`/api/${env.apiVer}/users/:id/profile`, [accessToken, userExist], getUserProfile);
 app.put(`/api/${env.apiVer}/users/profile`, updateUserProfile(sql));
 app.use('/images', express.static('static/avatar'));
 app.put(`/api/${env.apiVer}/users/picture`, changePicture);
