@@ -8,7 +8,7 @@ import env from '../.env.json' assert { type: "json" };
 // routes
 import signup from './users/signup.js';
 import signin from './users/signin.js';
-import { updateUserProfile } from './users/profile.js';
+import { updateUserProfile } from './users/profile/update.js';
 import { getUserProfile } from './users/profile/get.js';
 import changePicture from './users/picture.js';
 import searchUser from './users/search.js';

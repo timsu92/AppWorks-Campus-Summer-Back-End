@@ -3,7 +3,7 @@ import mysql from 'mysql2';
 import jose from 'jose';
 import z from "zod";
 
-import * as jwt from './jwt.js';
+import * as jwt from '../jwt.js';
 
 export function updateUserProfile(sql: mysql.Connection | mysql.Pool) {
   const iBodyZ = z.object({
