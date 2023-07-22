@@ -28,5 +28,5 @@ export function jsonContentType(
 }
 
 export function convertUserPicture (pictureInDB: string): Canchu.UserPicture {
-  return `https://${env.sqlCfg.host}/images/${pictureInDB}`;
+  return `https://${env.backendAddr as `${number}.${number}.${number}.${number}`}/images/${pictureInDB}`;
 }
