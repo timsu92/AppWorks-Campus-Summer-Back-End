@@ -1,6 +1,5 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import mysql from 'mysql2';
 import "reflect-metadata";
 import cors from 'cors';
 
@@ -49,7 +48,6 @@ const port = 3000;
 const app = express();
 app.use(bodyParser.json());
 app.use(cors(corsOptions)); // handles all CORS on all routes and processes CORS pre-flight
-const sql = mysql.createPool(env.sqlCfgOld);
 await Database.initialize();
 
 app.get('/', function (req, res) {
@@ -59,7 +57,7 @@ app.get('/', function (req, res) {
 app.post(`/api/${env.apiVer}/users/signup`, signup);
 app.post(`/api/${env.apiVer}/users/signin`, signin);
 app.get(`/api/${env.apiVer}/users/:id/profile`, [accessToken, userExist], getUserProfile);
-app.put(`/api/${env.apiVer}/users/profile`, [jsonContentType, accessToken], updateUserProfile(sql));
+app.put(`/api/${env.apiVer}/users/profile`, [jsonContentType, accessToken], updateUserProfile);
 app.use('/images', express.static('static/avatar'));
 app.put(`/api/${env.apiVer}/users/picture`, changePicture);
 app.get(`/api/${env.apiVer}/users/search`, [accessToken, userExist], searchUser);
