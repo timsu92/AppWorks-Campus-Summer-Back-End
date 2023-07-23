@@ -5,7 +5,7 @@ import z from 'zod';
 
 import * as jwt from './jwt.js';
 import { User } from '../db/entity/user.js';
-import { convertUserPicture } from '../util/util.js';
+import { armorUserPicture } from '../util/util.js';
 import { rm } from 'fs/promises';
 
 type oSuccess = {
@@ -79,7 +79,7 @@ export default async function (req: express.Request, res: express.Response<oSucc
       if (oldUsr === undefined) {
         return;
       }
-      res.status(200).send({ "data": { "picture": convertUserPicture(file.filename) } });
+      res.status(200).send({ "data": { "picture": armorUserPicture(file.filename) } });
       console.log(`user with id ${payload.id} changed picture to ${file.filename}`);
       if (oldUsr.picture.length > 1){
         await rm('./static/avatar/' + oldUsr.picture, {

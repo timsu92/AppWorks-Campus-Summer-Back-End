@@ -7,7 +7,7 @@ import { Post } from '../db/entity/post.js';
 import { Friendship } from '../db/entity/friendship.js';
 
 import { AccessTokenSuccessBody } from '../users/auth.js';
-import { convertUserPicture, date2CanchuStr } from '../util/util.js';
+import { armorUserPicture, date2CanchuStr } from '../util/util.js';
 
 class PaginationCursor {
   private _newestPostId: number;
@@ -148,7 +148,7 @@ export async function searchPost(
           "is_liked": post.likers!.some(liker => liker.likerId === req.body.loginUserId),
           "like_count": post.likers!.length,
           "comment_count": post.commentCount,
-          "picture": convertUserPicture(post.poster!.picture),
+          "picture": armorUserPicture(post.poster!.picture),
           "name": post.poster!.name
         }
       }),

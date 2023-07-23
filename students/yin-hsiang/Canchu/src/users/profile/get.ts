@@ -4,7 +4,7 @@ import { Equal } from 'typeorm';
 import { User } from '../../db/entity/user.js';
 import { Friendship } from '../../db/entity/friendship.js';
 import { AccessTokenSuccessBody } from '../auth.js';
-import { convertUserPicture } from '../../util/util.js';
+import { armorUserPicture } from '../../util/util.js';
 
 type oSuccess = {
   "data": {
@@ -49,7 +49,7 @@ export async function getUserProfile(
       "user": {
         "id": usr.id,
         "name": usr.name,
-        "picture": convertUserPicture(usr.picture),
+        "picture": armorUserPicture(usr.picture),
         "friend_count": usr.friendCount,
         "introduction": usr.introduction,
         "tags": usr.tags,

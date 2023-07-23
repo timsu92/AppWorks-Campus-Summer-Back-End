@@ -3,7 +3,7 @@ import mysql from 'mysql2';
 
 import env from "../../.env.json" assert {type: "json"};
 import { AccessTokenSuccessBody } from './auth.js';
-import { convertUserPicture } from '../util/util.js';
+import { armorUserPicture } from '../util/util.js';
 
 type oSuccess = { "data": { "users": Canchu.IUserSearchObject[] } }
 
@@ -60,7 +60,7 @@ export default async function (
                 return {
                   "id": record.userId,
                   "name": record.name,
-                  "picture": convertUserPicture(record.picture),
+                  "picture": armorUserPicture(record.picture),
                   "friendship": record.relationship === null ? null : {
                     "id": record.friendshipId,
                     "status": record.relationship
