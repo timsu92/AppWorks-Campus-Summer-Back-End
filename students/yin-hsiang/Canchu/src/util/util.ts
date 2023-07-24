@@ -28,5 +28,8 @@ export function jsonContentType(
 }
 
 export function convertUserPicture (pictureInDB: string): Canchu.UserPicture {
-  return `https://${env.backendAddr as `${number}.${number}.${number}.${number}`}/images/${pictureInDB}`;
+  if (pictureInDB.length > 0)
+    return `https://${env.backendAddr as `${number}.${number}.${number}.${number}`}/images/${pictureInDB}`;
+  else
+    return "";
 }
