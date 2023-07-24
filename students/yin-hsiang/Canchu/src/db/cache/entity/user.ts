@@ -4,8 +4,8 @@ import { armorUserPicture } from "../../../util/util.js";
 import { BaseEntity } from "../lib.js";
 
 export class UserStatic extends BaseEntity {
-  protected static REDIS_ROOT = "user";
-  // protected static FIELDS = ["id", "name", "picture", "introduction", "tags"];
+  // user:<userId>
+  protected static override REDIS_ROOT = "user";
 
   public static async getById(id: number): Promise<Canchu.Cache.IUserDetailObject | null> {
     assert(UserStatic._redis);

@@ -8,6 +8,7 @@ export function newRedis() {
 
 export class BaseEntity {
   protected static _redis?: Redis;
+  protected static REDIS_ROOT: string;
 
   public static init() {
     BaseEntity._redis = newRedis();
