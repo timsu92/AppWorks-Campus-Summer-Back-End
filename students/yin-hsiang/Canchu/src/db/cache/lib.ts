@@ -117,6 +117,6 @@ export class BaseEntity {
   }
 }
 
-export function init<T extends BaseEntity>(...entities: { new(): T }[]) {
+export function init(...entities: { new(): BaseEntity }[]) {
   entities.forEach(entity => (entity as unknown as typeof BaseEntity).init());
 }
