@@ -1,6 +1,6 @@
 import { BaseEntity } from "../lib.js";
 
-export class UserStatic extends BaseEntity {
+export class User extends BaseEntity {
   // user:<userId>
   protected static override REDIS_ROOT = "user";
 
@@ -11,19 +11,19 @@ export class UserStatic extends BaseEntity {
   public tags!: string;
   public friend_count!: number;
 
-  public static async getById(id: number): Promise<Canchu.Cache.IUserDetailObject | null> {
-    return await super.get<UserStatic>(id);
+  public static async getById(id: number): Promise<Canchu.Cache.IUserDetailObject | undefined> {
+    return await super.get<User>(id);
   }
 
   public static async setById(
     id: number,
     value: Canchu.Cache.IUserDetailObject,
-    expireTime?: Partial<KeyToType<Property<UserStatic>, number>> | undefined
+    expireTime?: Partial<KeyToType<Property<User>, number>> | undefined
   ) {
-    await super.set<UserStatic>(id, value, expireTime);
+    await super.set<User>(id, value, expireTime);
   }
 
   public static async delById(id: number) {
-    await super.del<UserStatic>(id);
+    await super.del<User>(id);
   }
 }
