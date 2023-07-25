@@ -69,17 +69,23 @@ export class BaseEntity {
     }
   }
 
-  public static async get<U extends BaseEntity>(this: { new(): U }, where: string | number): Promise<U> {
+  public static async get<U extends BaseEntity>(this: { new(): U }, where: string | number): Promise<U | undefined> {
     const this_ = this as unknown as typeof BaseEntity;
     assert(this_._redis);
     const object = {};
     for (const key of getAllNonFunctionKeys(new this_())) {
       // @ts-expect-error
       if (typeof this_[key] === "string" || typeof this_[key] === "number") {
+        const retrieved = await this_._redis.get(`${this_.REDIS_ROOT}:${where}:${key}`);
+        if (retrieved === null) {
+          return undefined;
+        }
         // @ts-expect-error
-        object[key] = await this_._redis.get(`${this_.REDIS_ROOT}:${where}:${key}`);
+        object[key] = retrieved;
       } else {
         const unknownValue = await this_._redis.get(`${this_.REDIS_ROOT}:${where}:${key}`);
+        if (unknownValue === null)
+          return undefined;
         try {
           // @ts-expect-error
           object[key] = JSON.parse(unknownValue);
@@ -92,7 +98,7 @@ export class BaseEntity {
     return object as U;
   }
 
-  public static async del<U extends BaseEntity>(this: {new(): U}, where: string | number) {
+  public static async del<U extends BaseEntity>(this: { new(): U }, where: string | number) {
     const this_ = this as unknown as typeof BaseEntity;
     assert(this_._redis);
     const transaction = this_._redis.multi();
@@ -100,11 +106,11 @@ export class BaseEntity {
       transaction.del(`${this_.REDIS_ROOT}:${where}:${key}`);
     }
     const execStatus = await transaction.exec();
-    if(execStatus === null){
+    if (execStatus === null) {
       return;
     }
-    for (const status of execStatus){
-      if(status[0] !== null){
+    for (const status of execStatus) {
+      if (status[0] !== null) {
         throw status[0];
       }
     }
