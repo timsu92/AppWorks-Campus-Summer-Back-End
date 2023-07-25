@@ -25,7 +25,7 @@ export default async function (
   try {
     conn.query(`
       SELECT
-        user.id as userId, user.name, user.picture, friendship.id as friendshipId, 
+        user.id as userId, user.name, user.picture, friendship.id as friendshipId,
         CASE
           WHEN friendship.status = 'friend' THEN 'friend'
           WHEN friendship.status = 'requested' AND friendship.requesterId = ? AND friendship.receiverId = user.id THEN 'requested'
