@@ -2,7 +2,7 @@ import express from 'express';
 
 import { AccessTokenSuccessBody } from '../users/auth.js';
 import { Post } from '../db/entity/post.js';
-import { date2CanchuStr } from '../util/util.js';
+import { convertUserPicture, date2CanchuStr } from '../util/util.js';
 
 type oSuccess = { "data": { "post": Canchu.IPostDetailObject } }
 type oError = { "error": string }
@@ -27,7 +27,7 @@ export async function getPostDetail(
       "poster": true,
     },
     "select": {
-      "id": true, "createdAt": true, "context": true, "summary": true,
+      "id": true, "createdAt": true, "context": true, "summary": true, "posterId": true,
       "poster": {
         "name": true,
         "picture": true
@@ -41,6 +41,7 @@ export async function getPostDetail(
         }
       },
       "likers": {
+        "id": true, // don't know why this is required
         "likerId": true
       }
     }
@@ -49,17 +50,19 @@ export async function getPostDetail(
     res.status(400).send({ "error": "Post not found" });
     return;
   }
+  console.log(`get post ${postId}'s detail'`);
   res.status(200).send({
     "data": {
       "post": {
         "id": post.id,
+        "user_id": post.posterId,
         "created_at": date2CanchuStr(post.createdAt),
         "context": post.context,
         "summary": post.summary ?? "", // nowhere found its usage yet
         "is_liked": post.likers!.some(postLike => postLike.likerId === req.body.loginUserId),
         "like_count": post.likers!.length,
         "comment_count": post.comments!.length,
-        "picture": post.poster!.picture,
+        "picture": convertUserPicture(post.poster!.picture),
         "name": post.poster!.name,
         "comments": post.comments!.map(cmt => {
           return {
@@ -69,7 +72,7 @@ export async function getPostDetail(
             "user": {
               "id": cmt.poster!.id,
               "name": cmt.poster!.name,
-              "picture": cmt.poster!.picture
+              "picture": convertUserPicture(cmt.poster!.picture)
             }
           };
         })

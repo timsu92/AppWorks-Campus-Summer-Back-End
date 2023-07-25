@@ -3,6 +3,7 @@ import mysql from 'mysql2';
 
 import env from "../../.env.json" assert {type: "json"};
 import { AccessTokenSuccessBody } from './auth.js';
+import { convertUserPicture } from '../util/util.js';
 
 type oSuccess = { "data": { "users": Canchu.IUserSearchObject[] } }
 
@@ -36,9 +37,8 @@ export default async function (
       LEFT JOIN friendship ON (friendship.requesterId = user.id AND friendship.receiverId = ?)
                            OR (friendship.requesterId = ? AND friendship.receiverId = user.id)
       WHERE
-        user.name LIKE ?
-        AND user.id != ?`,
-      [userId, userId, userId, userId, `%${keyword}%`, userId],
+        user.name LIKE ?`,
+      [userId, userId, userId, userId, `%${keyword}%`],
       function (err, _result, fields) {
         if (err) {
           res.status(500).send({ "error": "Internal database error" });
@@ -53,13 +53,14 @@ export default async function (
             "friendshipId": number,
             "relationship": "friend" | "requested" | "pending" | null
           }[];
+          console.log(`searched user with keyword=${keyword}`);
           res.status(200).send({
             "data": {
               "users": result.map(record => {
                 return {
                   "id": record.userId,
                   "name": record.name,
-                  "picture": record.picture,
+                  "picture": convertUserPicture(record.picture),
                   "friendship": record.relationship === null ? null : {
                     "id": record.friendshipId,
                     "status": record.relationship

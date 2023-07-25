@@ -3,9 +3,10 @@ import multer from 'multer';
 import jose from 'jose';
 import z from 'zod';
 
-import env from '../../.env.json' assert {type: "json"};
 import * as jwt from './jwt.js';
 import { User } from '../db/entity/user.js';
+import { convertUserPicture } from '../util/util.js';
+import { rm } from 'fs/promises';
 
 type oSuccess = {
   "data": {
@@ -42,7 +43,7 @@ export default async function (req: express.Request, res: express.Response<oSucc
     res.status(403).send({ "error": "invalid token format" });
     return;
   }
-  uploader(req, res, function (err) {
+  uploader(req, res, async function (err) {
     if (err) {
       if (err instanceof multer.MulterError) {
         res.status(400).send({ "error": err.message });
@@ -57,20 +58,40 @@ export default async function (req: express.Request, res: express.Response<oSucc
       res.status(400).send({ "error": "did not upload file correctly" });
     } else {
       const file = req.file;
-      User.update({ "id": payload.id }, { "picture": `images/${file.filename}` })
-        .then((updateResult) => {
-          if (updateResult.affected === 1) {
-            res.status(200).send({ "data": { "picture": `http://${env.sqlCfg.host}/images/${file.filename}` } });
-            console.log(`user with id ${payload.id} changed picture to /images/${file.filename}`);
-            next();
-          } else {
-            res.status(403).send({ "error": "invalid token id" });
-          }
-        })
-        .catch((err) => {
+      const oldUsr = await User.getRepository().manager.transaction(async mgr => {
+        const oldUsr = await mgr.findOne(User, {
+          "select": { "picture": true },
+          "where": { "id": payload.id },
+          "lock": { "mode": "pessimistic_partial_write" }
+        });
+        if (oldUsr === null) {
+          res.status(403).send({ "error": "invalid token id" });
+          return;
+        }
+        try {
+          await mgr.update(User, { "id": payload.id }, { "picture": file.filename });
+          return oldUsr;
+        } catch (err) {
           res.status(500).send({ "error": "internal database error" });
           console.error(`error while updating user picture\n${err}`);
-        })
+        }
+      })
+      if (oldUsr === undefined) {
+        return;
+      }
+      res.status(200).send({ "data": { "picture": convertUserPicture(file.filename) } });
+      console.log(`user with id ${payload.id} changed picture to ${file.filename}`);
+      if (oldUsr.picture.length > 1){
+        await rm('./static/avatar/' + oldUsr.picture, {
+          "force": true,
+          "retryDelay": 300,
+          "maxRetries": 3,
+          "recursive": true
+        });
+        console.log(`user with id ${payload.id}'s old picture is removed`);
+      } else {
+        console.log(`user with id ${payload.id}'s has no old picture`);
+      }
     }
   })
 }

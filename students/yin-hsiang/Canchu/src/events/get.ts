@@ -1,7 +1,7 @@
 import express from 'express';
 import { AccessTokenSuccessBody } from '../users/auth.js';
 import { Event_ } from '../db/entity/event.js';
-import { date2CanchuStr } from '../util/util.js';
+import { convertUserPicture, date2CanchuStr } from '../util/util.js';
 
 type oSuccess = { "data": { "events": Canchu.IEventObject[] } }
 
@@ -16,8 +16,10 @@ export default async function (
     "where": {
       "ownerId": req.body.loginUserId
     },
-    "relations": ["participant", "friendship"]
+    "relations": ["participant", "friendship"],
+    "order": {"createdAt": "DESC"},
   });
+  console.log(`user ${req.body.loginUserId} viewed events`);
   res.status(200).send({
     "data": {
       "events": events.map(ev => {
@@ -25,7 +27,7 @@ export default async function (
           "id": ev.id,
           "type": ev.type,
           "is_read": ev.isRead,
-          "image": ev.participant!.picture,
+          "image": convertUserPicture(ev.participant!.picture),
           "created_at": date2CanchuStr(ev.createdAt),
           "summary": ev.summary()
         }

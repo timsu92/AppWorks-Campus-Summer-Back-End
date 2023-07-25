@@ -1,10 +1,12 @@
 declare namespace Canchu {
+  type UserPicture = `https://${number}.${number}.${number}.${number}/images/${string}` | "";
+
   interface IUserObject {
     id: number,
     provider: string,
     email: string,
     name: string,
-    picture: string,
+    picture: UserPicture,
   }
   interface IFriendshipObject {
     id: number,
@@ -13,7 +15,7 @@ declare namespace Canchu {
   interface IUserDetailObject {
     id: number,
     name: string,
-    picture: string,
+    picture: UserPicture,
     friend_count: number,
     introduction: string,
     tags: string,
@@ -22,13 +24,13 @@ declare namespace Canchu {
   interface IUserSearchObject {
     id: number,
     name: string,
-    picture: string,
+    picture: UserPicture,
     friendship: IFriendshipObject | null
   }
   interface IEventObject {
     id: number,
     type: "friend_request",
-    image: string,
+    image: UserPicture,
     summary: string,
     is_read: boolean,
     created_at: string
@@ -39,7 +41,7 @@ declare namespace Canchu {
   interface IUserCommentObject {
     id: number;
     name: string;
-    picture: string;
+    picture: UserPicture;
   }
   interface ICommentObject {
     id: number;
@@ -49,13 +51,14 @@ declare namespace Canchu {
   }
   interface IPostDetailObject {
     id: number;
+    user_id: number;
     created_at: string;
     context: string;
     summary: string;
     is_liked: boolean;
     like_count: number;
     comment_count: number;
-    picture: string;
+    picture: UserPicture;
     name: string;
     comments: ICommentObject[];
   }
@@ -67,7 +70,7 @@ declare namespace Canchu {
     is_liked: boolean,
     like_count: number,
     comment_count: number,
-    picture: string,
+    picture: UserPicture,
     name: string
   }
 }

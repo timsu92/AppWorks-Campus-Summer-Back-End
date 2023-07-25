@@ -1,13 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import mysql from 'mysql2';
 import "reflect-metadata";
+import cors from 'cors';
 
 import env from '../.env.json' assert { type: "json" };
 // routes
 import signup from './users/signup.js';
 import signin from './users/signin.js';
-import { getUserProfile, updateUserProfile } from './users/profile.js';
+import { updateUserProfile } from './users/profile/update.js';
+import { getUserProfile } from './users/profile/get.js';
 import changePicture from './users/picture.js';
 import searchUser from './users/search.js';
 
@@ -23,7 +24,7 @@ import eventRead from './events/read.js';
 import createPost from './posts/create.js';
 import updatePost from './posts/update.js';
 import { getPostDetail } from './posts/detail.js';
-import { genCursor as genSearchCursor, searchPost } from './posts/search.js';
+import { genCursor as genSearchCursor, listTargetUserId, searchPost } from './posts/search.js';
 
 import { createLike, unlike } from './posts/like.js';
 
@@ -35,10 +36,18 @@ import { Database } from './db/data-source.js';
 import { accessToken, userExist } from './users/auth.js';
 import { jsonContentType } from './util/util.js';
 
+// global config
+const corsOptions: cors.CorsOptions = {
+  "origin": "https://" + env.frontendAddr,
+  "methods": "GET,PUT,POST,DELETE",
+  "allowedHeaders": ["Authorization", "Content-Type"]
+}
+const port = 3000;
+
+//
 const app = express();
 app.use(bodyParser.json());
-const port = 3000;
-const sql = mysql.createPool(env.sqlCfgOld);
+app.use(cors(corsOptions)); // handles all CORS on all routes and processes CORS pre-flight
 await Database.initialize();
 
 app.get('/', function (req, res) {
@@ -47,8 +56,8 @@ app.get('/', function (req, res) {
 
 app.post(`/api/${env.apiVer}/users/signup`, signup);
 app.post(`/api/${env.apiVer}/users/signin`, signin);
-app.get(`/api/${env.apiVer}/users/:id/profile`, getUserProfile(sql));
-app.put(`/api/${env.apiVer}/users/profile`, updateUserProfile(sql));
+app.get(`/api/${env.apiVer}/users/:id/profile`, [accessToken, userExist], getUserProfile);
+app.put(`/api/${env.apiVer}/users/profile`, [jsonContentType, accessToken], updateUserProfile);
 app.use('/images', express.static('static/avatar'));
 app.put(`/api/${env.apiVer}/users/picture`, changePicture);
 app.get(`/api/${env.apiVer}/users/search`, [accessToken, userExist], searchUser);
@@ -63,7 +72,7 @@ app.get(`/api/${env.apiVer}/events`, [accessToken, userExist], eventGet);
 app.post(`/api/${env.apiVer}/events/:event_id/read`, [accessToken], eventRead);
 
 app.post(`/api/${env.apiVer}/posts`, [jsonContentType, accessToken, userExist], createPost);
-app.get(`/api/${env.apiVer}/posts/search`, [accessToken, userExist], genSearchCursor, searchPost);
+app.get(`/api/${env.apiVer}/posts/search`, [accessToken, userExist], genSearchCursor, listTargetUserId, searchPost);
 app.put(`/api/${env.apiVer}/posts/:id`, [accessToken], updatePost);
 app.get(`/api/${env.apiVer}/posts/:id`, [accessToken, userExist], getPostDetail);
 

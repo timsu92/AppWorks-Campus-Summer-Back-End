@@ -1,7 +1,7 @@
 import express from 'express';
 import { AccessTokenSuccessBody } from '../users/auth.js';
 import { Event_ } from '../db/entity/event.js';
-import { date2CanchuStr } from '../util/util.js';
+import { convertUserPicture, date2CanchuStr } from '../util/util.js';
 
 type oSuccess = { "data": { "event": Canchu.IEventObject } }
 type oError = { "error": string }
@@ -43,7 +43,7 @@ export default async function (
       "event": {
         "id": event.id,
         "type": event.type,
-        "image": event.participant!.picture,
+        "image": convertUserPicture(event.participant!.picture),
         "summary": event.summary(),
         "is_read": event.isRead,
         "created_at": date2CanchuStr(event.createdAt)

@@ -1,5 +1,7 @@
 import express from 'express';
 
+import env from '../../.env.json' assert {type: "json"};
+
 const jetlagMillisecond = 1000 * 60 * (new Date().getTimezoneOffset() * -1);
 
 export function date2CanchuStr(timestamp: Date) {
@@ -7,7 +9,7 @@ export function date2CanchuStr(timestamp: Date) {
   const year = localTime.getFullYear();
   const month = (localTime.getMonth() + 1).toString().padStart(2, '0');
   const date = localTime.getDate().toString().padStart(2, '0');
-  const hour = (localTime.getHours()).toString().padStart(2, '0');
+  const hour = (localTime.getHours() + 8).toString().padStart(2, '0'); // workaround for EC2 not in UTC+8
   const minute = localTime.getMinutes().toString().padStart(2, '0');
   const second = localTime.getSeconds().toString().padStart(2, '0');
   return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
@@ -23,4 +25,11 @@ export function jsonContentType(
     return;
   }
   next();
+}
+
+export function convertUserPicture (pictureInDB: string): Canchu.UserPicture {
+  if (pictureInDB.length > 0)
+    return `https://${env.backendAddr as `${number}.${number}.${number}.${number}`}/images/${pictureInDB}`;
+  else
+    return "";
 }

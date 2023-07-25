@@ -36,6 +36,7 @@ export async function createLike(
     res.status(500).send({ "error": "Internal database error" });
     return;
   }
+  console.log(`user ${userId} liked post ${postId}`);
   res.status(200).send({ "data": { "post": { "id": postId } } });
   next();
 }
@@ -72,6 +73,7 @@ export async function unlike(
     res.status(500).send({ "error": "Internal database error" });
     return;
   }
+  console.log(`user ${userId} revoked like on post ${postId}`);
   res.status(200).send({ "data": { "post": { "id": postId } } });
   next();
 }
