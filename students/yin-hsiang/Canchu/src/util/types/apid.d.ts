@@ -1,5 +1,5 @@
 declare namespace Canchu {
-  type UserPicture = `https://${number}.${number}.${number}.${number}/images/${string}`;
+  type UserPicture = `https://${number}.${number}.${number}.${number}/images/${string}` | "";
 
   interface IUserObject {
     id: number,

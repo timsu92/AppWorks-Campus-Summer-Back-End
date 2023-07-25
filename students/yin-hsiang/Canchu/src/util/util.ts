@@ -28,5 +28,8 @@ export function jsonContentType(
 }
 
 export function armorUserPicture (pictureInDB: string): Canchu.UserPicture {
-  return `https://${env.cacheAddr as `${number}.${number}.${number}.${number}`}/images/${pictureInDB}`;
+  if (pictureInDB.length > 0)
+    return `https://${env.cacheAddr as `${number}.${number}.${number}.${number}`}/images/${pictureInDB}`;
+  else
+    return "";
 }
