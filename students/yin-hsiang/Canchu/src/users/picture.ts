@@ -4,7 +4,8 @@ import jose from 'jose';
 import z from 'zod';
 
 import * as jwt from './jwt.js';
-import { User } from '../db/entity/user.js';
+import { User as DbUser } from '../db/entity/user.js';
+import { User as CacheUser } from '../db/cache/entity/user.js';
 import { armorUserPicture } from '../util/util.js';
 import { rm } from 'fs/promises';
 
@@ -58,8 +59,8 @@ export default async function (req: express.Request, res: express.Response<oSucc
       res.status(400).send({ "error": "did not upload file correctly" });
     } else {
       const file = req.file;
-      const oldUsr = await User.getRepository().manager.transaction(async mgr => {
-        const oldUsr = await mgr.findOne(User, {
+      const oldUsr = await DbUser.getRepository().manager.transaction(async mgr => {
+        const oldUsr = await mgr.findOne(DbUser, {
           "select": { "picture": true },
           "where": { "id": payload.id },
           "lock": { "mode": "pessimistic_partial_write" }
@@ -69,7 +70,8 @@ export default async function (req: express.Request, res: express.Response<oSucc
           return;
         }
         try {
-          await mgr.update(User, { "id": payload.id }, { "picture": file.filename });
+          await CacheUser.delById(payload.id);
+          await mgr.update(DbUser, { "id": payload.id }, { "picture": file.filename });
           return oldUsr;
         } catch (err) {
           res.status(500).send({ "error": "internal database error" });
@@ -81,7 +83,7 @@ export default async function (req: express.Request, res: express.Response<oSucc
       }
       res.status(200).send({ "data": { "picture": armorUserPicture(file.filename) } });
       console.log(`user with id ${payload.id} changed picture to ${file.filename}`);
-      if (oldUsr.picture.length > 1){
+      if (oldUsr.picture.length > 1) {
         await rm('./static/avatar/' + oldUsr.picture, {
           "force": true,
           "retryDelay": 300,
