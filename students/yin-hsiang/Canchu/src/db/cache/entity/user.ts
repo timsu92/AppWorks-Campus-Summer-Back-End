@@ -22,4 +22,8 @@ export class UserStatic extends BaseEntity {
   ) {
     await super.set<UserStatic>(id, value, expireTime);
   }
+
+  public static async delById(id: number) {
+    await super.del<UserStatic>(id);
+  }
 }

@@ -91,6 +91,24 @@ export class BaseEntity {
     }
     return object as U;
   }
+
+  public static async del<U extends BaseEntity>(this: {new(): U}, where: string | number) {
+    const this_ = this as unknown as typeof BaseEntity;
+    assert(this_._redis);
+    const transaction = this_._redis.multi();
+    for (const key of getAllNonFunctionKeys(new this_())) {
+      transaction.del(`${this_.REDIS_ROOT}:${where}:${key}`);
+    }
+    const execStatus = await transaction.exec();
+    if(execStatus === null){
+      return;
+    }
+    for (const status of execStatus){
+      if(status[0] !== null){
+        throw status[0];
+      }
+    }
+  }
 }
 
 export function init<T extends BaseEntity>(...entities: { new(): T }[]) {
