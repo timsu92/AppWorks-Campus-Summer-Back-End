@@ -45,17 +45,18 @@ export async function rateLimiter(
   const BLOCK_DURATION = 30;
 
   const redis = newRedis();
-  const isNewUser = await redis.set(`operateCount:${req.ip}`, 1, "EX", NORMAL_DURATION, "NX");
+  const clientIp = req.headers['x-forwarded-for'] || req.ip;
+  const isNewUser = await redis.set(`operateCount:${clientIp}`, 1, "EX", NORMAL_DURATION, "NX");
   if (isNewUser) {
     await redis.quit();
     return next();
   }
-  const count = await redis.incr(`operateCount:${req.ip}`);
+  const count = await redis.incr(`operateCount:${clientIp}`);
   if (count > NORMAL_COUNT) {
     // return 1 on success and 0 on fail
-    const setExpireSuccessful = await redis.expire(`operateCount:${req.ip}`, BLOCK_DURATION);
+    const setExpireSuccessful = await redis.expire(`operateCount:${clientIp}`, BLOCK_DURATION);
     if (!setExpireSuccessful) {
-      await redis.set(`operateCount:${req.ip}`, NORMAL_COUNT + 1, "EX", BLOCK_DURATION, "NX");
+      await redis.set(`operateCount:${clientIp}`, NORMAL_COUNT + 1, "EX", BLOCK_DURATION, "NX");
     }
     await redis.quit();
     return res.status(429).appendHeader("Retry-After", "30").send({ "error": "Too Many Requests" });
