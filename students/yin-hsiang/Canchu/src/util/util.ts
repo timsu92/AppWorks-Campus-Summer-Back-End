@@ -45,7 +45,7 @@ export async function rateLimiter(
   const BLOCK_DURATION = 30;
 
   const redis = newRedis();
-  const clientIp = req.headers['x-forwarded-for'] || req.ip;
+  const clientIp = req.headers['x-forwarded-for'];
   const isNewUser = await redis.set(`operateCount:${clientIp}`, 1, "EX", NORMAL_DURATION, "NX");
   if (isNewUser) {
     await redis.quit();
