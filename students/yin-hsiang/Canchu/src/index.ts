@@ -64,7 +64,7 @@ app.get(`/api/${env.apiVer}/users/:id/profile`, [accessToken, userExist], getUse
 app.put(`/api/${env.apiVer}/users/profile`, [jsonContentType, accessToken], updateUserProfile);
 app.use('/images', express.static('static/avatar'));
 app.put(`/api/${env.apiVer}/users/picture`, changePicture);
-app.get(`/api/${env.apiVer}/users/search`, rateLimiter(18), [accessToken, userExist], searchUser);
+app.get(`/api/${env.apiVer}/users/search`, rateLimiter(14), [accessToken, userExist], searchUser);
 
 app.get(`/api/${env.apiVer}/friends`, [accessToken, userExist], friendGet);
 app.post(`/api/${env.apiVer}/friends/:user_id/request`, [accessToken], friendRequest);
