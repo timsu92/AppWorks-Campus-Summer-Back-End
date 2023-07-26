@@ -35,7 +35,7 @@ import { Database } from './db/data-source.js';
 import { initDbCache } from './db/cache/common.js';
 // utils
 import { accessToken, userExist } from './users/auth.js';
-import { jsonContentType } from './util/util.js';
+import { jsonContentType, rateLimiter } from './util/util.js';
 
 // global config
 const corsOptions: cors.CorsOptions = {
@@ -51,6 +51,8 @@ app.use(bodyParser.json());
 app.use(cors(corsOptions)); // handles all CORS on all routes and processes CORS pre-flight
 await Database.initialize();
 initDbCache();
+
+app.use(rateLimiter);
 
 app.get('/', function (req, res) {
   res.send("Hello friend from the other side!");
