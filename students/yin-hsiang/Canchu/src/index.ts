@@ -52,7 +52,7 @@ app.use(cors(corsOptions)); // handles all CORS on all routes and processes CORS
 await Database.initialize();
 initDbCache();
 
-app.use(rateLimiter);
+app.use(new RegExp(`^(?!\/api\/${env.apiVer}\/users\/search).*`), rateLimiter()); // user search involves higher frequency of requests
 
 app.get('/', function (req, res) {
   res.send("Hello friend from the other side!");
@@ -64,7 +64,7 @@ app.get(`/api/${env.apiVer}/users/:id/profile`, [accessToken, userExist], getUse
 app.put(`/api/${env.apiVer}/users/profile`, [jsonContentType, accessToken], updateUserProfile);
 app.use('/images', express.static('static/avatar'));
 app.put(`/api/${env.apiVer}/users/picture`, changePicture);
-app.get(`/api/${env.apiVer}/users/search`, [accessToken, userExist], searchUser);
+app.get(`/api/${env.apiVer}/users/search`, rateLimiter(18), [accessToken, userExist], searchUser);
 
 app.get(`/api/${env.apiVer}/friends`, [accessToken, userExist], friendGet);
 app.post(`/api/${env.apiVer}/friends/:user_id/request`, [accessToken], friendRequest);
