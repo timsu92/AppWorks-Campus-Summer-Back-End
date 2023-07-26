@@ -28,10 +28,12 @@ function getAllNonFunctionKeys(obj: object): string[] {
 export class BaseEntity {
   protected static _redis?: Redis;
   protected static REDIS_ROOT: string;
+  private static PROPERTIES: string[];
 
   public static init<U extends BaseEntity>(this: { new(): U }) {
     // setup redis of derived class
     (this as unknown as typeof BaseEntity)._redis = newRedis();
+    (this as unknown as typeof BaseEntity).PROPERTIES = getAllNonFunctionKeys(new this);
   }
 
   public static async set<U extends BaseEntity>(
@@ -73,7 +75,7 @@ export class BaseEntity {
     const this_ = this as unknown as typeof BaseEntity;
     assert(this_._redis);
     const object = {};
-    for (const key of getAllNonFunctionKeys(new this_())) {
+    for (const key of this_.PROPERTIES) {
       // @ts-expect-error
       if (typeof this_[key] === "string" || typeof this_[key] === "number") {
         const retrieved = await this_._redis.get(`${this_.REDIS_ROOT}:${where}:${key}`);
@@ -102,7 +104,7 @@ export class BaseEntity {
     const this_ = this as unknown as typeof BaseEntity;
     assert(this_._redis);
     const transaction = this_._redis.multi();
-    for (const key of getAllNonFunctionKeys(new this_())) {
+    for (const key of this_.PROPERTIES) {
       transaction.del(`${this_.REDIS_ROOT}:${where}:${key}`);
     }
     const execStatus = await transaction.exec();
