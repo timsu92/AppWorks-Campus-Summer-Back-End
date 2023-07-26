@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import * as jwt from "./jwt.js";
 import { User } from "../db/entity/user.js";
 import { QueryFailedError } from "typeorm";
-import { convertUserPicture } from "../util/util.js";
+import { armorUserPicture } from "../util/util.js";
 
 const saltRounds = 10;
 
@@ -46,7 +46,7 @@ export default async function (req: express.Request, res: express.Response<oSucc
           "provider": newUser.provider,
           "email": newUser.email,
           "name": newUser.name,
-          "picture": convertUserPicture(newUser.picture)
+          "picture": armorUserPicture(newUser.picture)
         };
         res.status(200).send({
           "data": {

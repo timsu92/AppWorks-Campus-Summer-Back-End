@@ -2,7 +2,8 @@ import express from 'express';
 import z from "zod";
 
 import { AccessTokenSuccessBody } from '../auth.js';
-import { User } from '../../db/entity/user.js';
+import { User as DbUser } from '../../db/entity/user.js';
+import { User as CacheUser } from '../../db/cache/entity/user.js';
 
 const iBodyZ = z.object({
   "name": z.string().nonempty(),
@@ -39,7 +40,7 @@ export async function updateUserProfile(
   }
   const userId = req.body.loginUserId;
   try {
-    const updateResult = await User.update({ "id": userId }, {
+    const updateResult = await DbUser.update({ "id": userId }, {
       "name": body.data.name,
       "introduction": body.data.introduction,
       "tags": body.data.tags
@@ -48,6 +49,7 @@ export async function updateUserProfile(
     if (updateResult.affected === 0)
       return res.status(403).send({ "error": "Wrong token" });
     console.log(`user with id ${userId} changed profile to`, body.data);
+    await CacheUser.delById(userId);
     return res.status(200).send({ "data": { "user": { "id": userId } } });
   } catch (err) {
     res.status(500).send({ "error": "internal database error" });

@@ -2,7 +2,7 @@ import express from 'express';
 
 import { AccessTokenSuccessBody } from '../users/auth.js';
 import { Friendship } from '../db/entity/friendship.js';
-import { convertUserPicture } from '../util/util.js';
+import { armorUserPicture } from '../util/util.js';
 
 type oSuccess = {
   "data": {
@@ -34,7 +34,7 @@ export default async function (
         return {
           "id": opponentUser.id,
           "name": opponentUser.name,
-          "picture": convertUserPicture(opponentUser.picture),
+          "picture": armorUserPicture(opponentUser.picture),
           "friendship": {
             "id": friendship.id,
             "status": friendship.status
