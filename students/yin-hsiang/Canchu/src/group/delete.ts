@@ -50,6 +50,7 @@ export async function deleteGroup(
       throw err;
     }
 
+    console.log(`User ${req.body.loginUserId} deleted group ${groupId}`);
     return res.status(200).send({ "data": { "group": { "id": groupId } } });
   })
 }

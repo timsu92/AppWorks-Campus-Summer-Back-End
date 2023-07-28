@@ -42,6 +42,7 @@ export async function createGroup(
         throw err;
       }
 
+      console.log(`user ${adminId} created group ${group.id}`);
       return res.status(200).send({ "data": { "group": { "id": group.id } } });
     })
   } catch (e) { }
