@@ -18,7 +18,7 @@ export async function createGroup(
   const adminId = req.body.loginUserId;
 
   try {
-    await UserGroup.getRepository().manager.transaction(async mgr => {
+    return await UserGroup.getRepository().manager.transaction(async mgr => {
       let group = new Group();
       group.adminId = adminId;
       group.name = groupName;
