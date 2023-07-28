@@ -73,4 +73,7 @@ declare namespace Canchu {
     picture: UserPicture,
     name: string
   }
+  interface IGroupObject {
+    "data": { "group": { "id": number } }
+  }
 }
