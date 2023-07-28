@@ -84,4 +84,5 @@ declare namespace Canchu {
       "status": "pending"
     }[]
   }
+  type IGroupPostDetailObject = Omit<IPostDetailObject, 'summary' | 'comments'>
 }

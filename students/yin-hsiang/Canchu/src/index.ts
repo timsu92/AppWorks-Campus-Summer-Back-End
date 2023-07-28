@@ -37,6 +37,7 @@ import { groupPendingApplications } from './group/pending.js';
 import { groupAgreeApplication } from './group/agree.js';
 
 import { createGroupPost } from './group/post/create.js';
+import { listAllGroupPosts } from './group/post/get.js';
 // database
 import { Database } from './db/data-source.js';
 import { initDbCache } from './db/cache/common.js';
@@ -97,6 +98,7 @@ app.get(`/api/${env.apiVer}/groups/:group_id/member/pending`, [accessToken], gro
 app.post(`/api/${env.apiVer}/groups/:group_id/member/:user_id/agree`, [accessToken], groupAgreeApplication);
 
 app.post(`/api/${env.apiVer}/groups/:group_id/post`, [jsonContentType, accessToken], createGroupPost);
+app.get(`/api/${env.apiVer}/groups/:group_id/posts`, [accessToken], listAllGroupPosts);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
