@@ -31,15 +31,16 @@ import { createLike, unlike } from './posts/like.js';
 import { createComment } from './posts/comment.js';
 
 import { createGroup } from './group/create.js';
+import { deleteGroup } from './group/delete.js';
+import { joinGroup } from './group/join.js';
+import { groupPendingApplications } from './group/pending.js';
+import { groupAgreeApplication } from './group/agree.js';
 // database
 import { Database } from './db/data-source.js';
 import { initDbCache } from './db/cache/common.js';
 // utils
 import { accessToken, userExist } from './users/auth.js';
 import { jsonContentType } from './util/util.js';
-import { deleteGroup } from './group/delete.js';
-import { joinGroup } from './group/join.js';
-import { groupPendingApplications } from './group/pending.js';
 
 // global config
 const corsOptions: cors.CorsOptions = {
@@ -91,6 +92,7 @@ app.post(`/api/${env.apiVer}/groups`, [jsonContentType, accessToken, userExist],
 app.delete(`/api/${env.apiVer}/groups/:group_id`, [accessToken], deleteGroup);
 app.post(`/api/${env.apiVer}/groups/:group_id/join`, [accessToken, userExist], joinGroup);
 app.get(`/api/${env.apiVer}/groups/:group_id/member/pending`, [accessToken], groupPendingApplications);
+app.post(`/api/${env.apiVer}/groups/:group_id/member/:user_id/agree`, [accessToken], groupAgreeApplication);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
