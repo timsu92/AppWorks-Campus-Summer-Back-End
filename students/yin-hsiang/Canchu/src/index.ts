@@ -39,6 +39,7 @@ import { accessToken, userExist } from './users/auth.js';
 import { jsonContentType } from './util/util.js';
 import { deleteGroup } from './group/delete.js';
 import { joinGroup } from './group/join.js';
+import { groupPendingApplications } from './group/pending.js';
 
 // global config
 const corsOptions: cors.CorsOptions = {
@@ -89,6 +90,7 @@ app.post(`/api/${env.apiVer}/posts/:id/comment`, [jsonContentType, accessToken, 
 app.post(`/api/${env.apiVer}/groups`, [jsonContentType, accessToken, userExist], createGroup);
 app.delete(`/api/${env.apiVer}/groups/:group_id`, [accessToken], deleteGroup);
 app.post(`/api/${env.apiVer}/groups/:group_id/join`, [accessToken, userExist], joinGroup);
+app.get(`/api/${env.apiVer}/groups/:group_id/member/pending`, [accessToken], groupPendingApplications);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);

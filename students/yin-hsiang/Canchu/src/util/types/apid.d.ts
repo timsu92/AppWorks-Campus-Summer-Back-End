@@ -76,7 +76,12 @@ declare namespace Canchu {
   interface IGroupObject {
     "group": { "id": number }
   }
-  interface IGroupPending {
-
+  interface IGroupPendingObject {
+    "users": {
+      "id": number,
+      "name": string,
+      "picture": UserPicture,
+      "status": "pending"
+    }[]
   }
 }
