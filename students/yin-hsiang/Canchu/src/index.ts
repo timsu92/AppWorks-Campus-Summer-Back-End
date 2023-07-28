@@ -37,6 +37,7 @@ import { initDbCache } from './db/cache/common.js';
 // utils
 import { accessToken, userExist } from './users/auth.js';
 import { jsonContentType } from './util/util.js';
+import { deleteGroup } from './group/delete.js';
 
 // global config
 const corsOptions: cors.CorsOptions = {
@@ -85,6 +86,7 @@ app.delete(`/api/${env.apiVer}/posts/:id/like`, [accessToken], unlike);
 app.post(`/api/${env.apiVer}/posts/:id/comment`, [jsonContentType, accessToken, userExist], createComment);
 
 app.post(`/api/${env.apiVer}/groups`, [jsonContentType, accessToken, userExist], createGroup);
+app.delete(`/api/${env.apiVer}/groups/:group_id`, [accessToken], deleteGroup);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
