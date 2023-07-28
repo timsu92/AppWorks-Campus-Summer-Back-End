@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, OneToMany, ManyToOne } from 'typeorm';
 import { Friendship } from './friendship.js';
 import { Event_ } from './event.js';
 import { Post, PostLikes } from './post.js';
+import { UserGroup } from './group.js';
 
 @Entity()
 export class User extends BaseEntity {
@@ -47,6 +48,9 @@ export class User extends BaseEntity {
   @OneToMany(() => PostLikes, postlike => postlike.liker)
   likedPosts?: import("./post.js").PostLikes[];
 
-  @Column({"type": "int", "nullable": false, "unsigned": true, "default": 0})
+  @Column({ "type": "int", "nullable": false, "unsigned": true, "default": 0 })
   friendCount!: number;
+
+  @OneToMany(() => UserGroup, group => group.user)
+  groups?: import("./group.js").UserGroup[];
 }

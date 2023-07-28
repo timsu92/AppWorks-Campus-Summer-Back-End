@@ -30,6 +30,7 @@ import { createLike, unlike } from './posts/like.js';
 
 import { createComment } from './posts/comment.js';
 
+import { createGroup } from './group/create.js';
 // database
 import { Database } from './db/data-source.js';
 import { initDbCache } from './db/cache/common.js';
@@ -82,6 +83,8 @@ app.post(`/api/${env.apiVer}/posts/:id/like`, [accessToken, userExist], createLi
 app.delete(`/api/${env.apiVer}/posts/:id/like`, [accessToken], unlike);
 
 app.post(`/api/${env.apiVer}/posts/:id/comment`, [jsonContentType, accessToken, userExist], createComment);
+
+app.post(`/api/${env.apiVer}/groups`, [jsonContentType, accessToken, userExist], createGroup);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
