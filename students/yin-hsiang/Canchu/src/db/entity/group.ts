@@ -38,4 +38,7 @@ export class UserGroup extends BaseEntity {
   @ManyToOne(() => Group, group => group.members)
   @JoinColumn({ "name": "groupId" })
   group?: Group;
+
+  @Column()
+  status!: "member" | "in application"
 }

@@ -32,6 +32,7 @@ export async function createGroup(
     let relation = new UserGroup();
     relation.groupId = group.id;
     relation.userId = adminId;
+    relation.status = "member";
     try {
       relation = await relation.save();
     } catch (err) {
