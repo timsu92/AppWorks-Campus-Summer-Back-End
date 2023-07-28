@@ -38,6 +38,7 @@ import { initDbCache } from './db/cache/common.js';
 import { accessToken, userExist } from './users/auth.js';
 import { jsonContentType } from './util/util.js';
 import { deleteGroup } from './group/delete.js';
+import { joinGroup } from './group/join.js';
 
 // global config
 const corsOptions: cors.CorsOptions = {
@@ -87,6 +88,7 @@ app.post(`/api/${env.apiVer}/posts/:id/comment`, [jsonContentType, accessToken, 
 
 app.post(`/api/${env.apiVer}/groups`, [jsonContentType, accessToken, userExist], createGroup);
 app.delete(`/api/${env.apiVer}/groups/:group_id`, [accessToken], deleteGroup);
+app.post(`/api/${env.apiVer}/groups/:group_id/join`, [accessToken, userExist], joinGroup);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
