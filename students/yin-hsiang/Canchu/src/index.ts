@@ -38,6 +38,8 @@ import { groupAgreeApplication } from './group/agree.js';
 
 import { createGroupPost } from './group/post/create.js';
 import { listAllGroupPosts } from './group/post/get.js';
+
+import { sendChatMessage } from './chat/create.js';
 // database
 import { Database } from './db/data-source.js';
 import { initDbCache } from './db/cache/common.js';
@@ -99,6 +101,7 @@ app.post(`/api/${env.apiVer}/groups/:group_id/member/:user_id/agree`, [accessTok
 
 app.post(`/api/${env.apiVer}/groups/:group_id/post`, [jsonContentType, accessToken], createGroupPost);
 app.get(`/api/${env.apiVer}/groups/:group_id/posts`, [accessToken], listAllGroupPosts);
+app.post(`/api/${env.apiVer}/chat/:user_id`, [jsonContentType, accessToken, userExist], sendChatMessage);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
