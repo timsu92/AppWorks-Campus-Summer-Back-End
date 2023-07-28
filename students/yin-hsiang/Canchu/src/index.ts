@@ -35,6 +35,8 @@ import { deleteGroup } from './group/delete.js';
 import { joinGroup } from './group/join.js';
 import { groupPendingApplications } from './group/pending.js';
 import { groupAgreeApplication } from './group/agree.js';
+
+import { createGroupPost } from './group/post/create.js';
 // database
 import { Database } from './db/data-source.js';
 import { initDbCache } from './db/cache/common.js';
@@ -93,6 +95,8 @@ app.delete(`/api/${env.apiVer}/groups/:group_id`, [accessToken], deleteGroup);
 app.post(`/api/${env.apiVer}/groups/:group_id/join`, [accessToken, userExist], joinGroup);
 app.get(`/api/${env.apiVer}/groups/:group_id/member/pending`, [accessToken], groupPendingApplications);
 app.post(`/api/${env.apiVer}/groups/:group_id/member/:user_id/agree`, [accessToken], groupAgreeApplication);
+
+app.post(`/api/${env.apiVer}/groups/:group_id/post`, [jsonContentType, accessToken], createGroupPost);
 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);

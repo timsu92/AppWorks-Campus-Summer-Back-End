@@ -18,6 +18,9 @@ export class Group extends BaseEntity {
 
   @OneToMany(() => User, usr => usr.groups)
   members?: import("./user.js").User[];
+
+  @OneToMany(() => GroupPost, post => post.group)
+  posts?: GroupPost[];
 }
 
 @Entity()
@@ -41,4 +44,30 @@ export class UserGroup extends BaseEntity {
 
   @Column()
   status!: "member" | "in application"
+}
+
+@Entity()
+export class GroupPost extends BaseEntity {
+  @PrimaryGeneratedColumn("increment")
+  id!: number;
+
+  @Column()
+  context!: string;
+
+  @Column({ "type": "datetime", "nullable": false, "default": "CURRENT_TIMESTAMP" })
+  createdAt!: Date;
+
+  @Column({ "type": "bigint", "nullable": false, "unsigned": true })
+  posterId!: number;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ "name": "posterId" })
+  poster?: import('./user.js').User;
+
+  @Column()
+  groupId!: number;
+
+  @ManyToOne(() => Group, group => group.posts)
+  @JoinColumn({ "name": "groupId" })
+  group?: Group;
 }
