@@ -85,4 +85,14 @@ declare namespace Canchu {
     }[]
   }
   type IGroupPostDetailObject = Omit<IPostDetailObject, 'summary' | 'comments'>
+  interface IChatMessageObject {
+    id: number,
+    message: string,
+    created_at: string,
+    user: {
+      id: number,
+      name: string,
+      picture: UserPicture
+    }
+  }
 }
