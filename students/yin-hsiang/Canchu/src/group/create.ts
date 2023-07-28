@@ -3,7 +3,7 @@ import express from "express";
 import { AccessTokenSuccessBody } from "../users/auth.js";
 import { Group, UserGroup } from "../db/entity/group.js";
 
-type oSuccess = Canchu.IGroupObject
+type oSuccess = { "data": Canchu.IGroupObject }
 type oError = { "error": string }
 
 export async function createGroup(

@@ -5,7 +5,7 @@ import { Group, UserGroup } from "../db/entity/group.js";
 import { AccessTokenSuccessBody } from "../users/auth.js";
 import { Equal } from "typeorm";
 
-type oSuccess = Canchu.IGroupObject
+type oSuccess = { "data": Canchu.IGroupObject }
 type oError = { "error": string }
 
 export async function deleteGroup(

@@ -4,7 +4,7 @@ import z from 'zod';
 import { Group, UserGroup } from "../db/entity/group.js";
 import { AccessTokenSuccessBody } from "../users/auth.js";
 
-type oSuccess = Canchu.IGroupObject
+type oSuccess = { "data": Canchu.IGroupObject }
 type oError = { "error": string }
 
 export async function joinGroup(

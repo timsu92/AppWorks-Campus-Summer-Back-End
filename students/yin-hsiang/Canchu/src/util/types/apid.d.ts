@@ -74,6 +74,9 @@ declare namespace Canchu {
     name: string
   }
   interface IGroupObject {
-    "data": { "group": { "id": number } }
+    "group": { "id": number }
+  }
+  interface IGroupPending {
+
   }
 }
