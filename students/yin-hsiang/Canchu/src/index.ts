@@ -35,7 +35,7 @@ import { Database } from './db/data-source.js';
 import { initDbCache } from './db/cache/common.js';
 // utils
 import { accessToken, userExist } from './users/auth.js';
-import { jsonContentType } from './util/util.js';
+import { jsonContentType, rateLimiter } from './util/util.js';
 
 // global config
 const corsOptions: cors.CorsOptions = {
@@ -52,6 +52,8 @@ app.use(cors(corsOptions)); // handles all CORS on all routes and processes CORS
 await Database.initialize();
 initDbCache();
 
+app.use(new RegExp(`^(?!\/api\/${env.apiVer}\/users\/search).*`), rateLimiter()); // user search involves higher frequency of requests
+
 app.get('/', function (req, res) {
   res.send("Hello friend from the other side!");
 })
@@ -62,7 +64,7 @@ app.get(`/api/${env.apiVer}/users/:id/profile`, [accessToken, userExist], getUse
 app.put(`/api/${env.apiVer}/users/profile`, [jsonContentType, accessToken], updateUserProfile);
 app.use('/images', express.static('static/avatar'));
 app.put(`/api/${env.apiVer}/users/picture`, changePicture);
-app.get(`/api/${env.apiVer}/users/search`, [accessToken, userExist], searchUser);
+app.get(`/api/${env.apiVer}/users/search`, rateLimiter(14), [accessToken, userExist], searchUser);
 
 app.get(`/api/${env.apiVer}/friends`, [accessToken, userExist], friendGet);
 app.post(`/api/${env.apiVer}/friends/:user_id/request`, [accessToken], friendRequest);
