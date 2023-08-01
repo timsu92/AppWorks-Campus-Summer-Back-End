@@ -4,3 +4,4 @@ extension:
 spec:
   - test/**/*.test.ts
 timeout: 4000
+exit: true
