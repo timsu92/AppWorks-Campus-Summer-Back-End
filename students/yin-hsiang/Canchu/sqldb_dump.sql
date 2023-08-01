@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.34, for Linux (x86_64)
 --
--- Host: localhost    Database: stylish
+-- Host: localhost    Database: canchu
 -- ------------------------------------------------------
 -- Server version	8.0.34
 
@@ -16,43 +16,34 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `stylish`
+-- Table structure for table `chat_message`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `stylish` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-
-USE `stylish`;
-
---
--- Table structure for table `product`
---
-
-DROP TABLE IF EXISTS `product`;
+DROP TABLE IF EXISTS `chat_message`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `product` (
+CREATE TABLE `chat_message` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `senderId` bigint unsigned NOT NULL,
+  `receiverId` bigint unsigned NOT NULL,
+  `message` varchar(500) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `senderId` (`senderId`),
+  KEY `receiverId` (`receiverId`),
+  CONSTRAINT `chat_message_ibfk_1` FOREIGN KEY (`senderId`) REFERENCES `user` (`id`),
+  CONSTRAINT `chat_message_ibfk_2` FOREIGN KEY (`receiverId`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `product`
+-- Dumping data for table `chat_message`
 --
 
-LOCK TABLES `product` WRITE;
-/*!40000 ALTER TABLE `product` DISABLE KEYS */;
-/*!40000 ALTER TABLE `product` ENABLE KEYS */;
+LOCK TABLES `chat_message` WRITE;
+/*!40000 ALTER TABLE `chat_message` DISABLE KEYS */;
+/*!40000 ALTER TABLE `chat_message` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Current Database: `canchu`
---
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `canchu` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-
-USE `canchu`;
 
 --
 -- Table structure for table `event`
@@ -76,7 +67,7 @@ CREATE TABLE `event` (
   CONSTRAINT `event_ibfk_1` FOREIGN KEY (`participantId`) REFERENCES `user` (`id`),
   CONSTRAINT `event_ibfk_2` FOREIGN KEY (`ownerId`) REFERENCES `user` (`id`),
   CONSTRAINT `event_ibfk_3` FOREIGN KEY (`friendshipId`) REFERENCES `friendship` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +96,7 @@ CREATE TABLE `friendship` (
   KEY `fk_receiverId` (`receiverId`),
   CONSTRAINT `fk_receiverId` FOREIGN KEY (`receiverId`) REFERENCES `user` (`id`),
   CONSTRAINT `fk_requesterId` FOREIGN KEY (`requesterId`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,6 +106,60 @@ CREATE TABLE `friendship` (
 LOCK TABLES `friendship` WRITE;
 /*!40000 ALTER TABLE `friendship` DISABLE KEYS */;
 /*!40000 ALTER TABLE `friendship` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `group`
+--
+
+DROP TABLE IF EXISTS `group`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `group` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `adminId` bigint unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `adminId` (`adminId`),
+  CONSTRAINT `group_ibfk_1` FOREIGN KEY (`adminId`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `group`
+--
+
+LOCK TABLES `group` WRITE;
+/*!40000 ALTER TABLE `group` DISABLE KEYS */;
+/*!40000 ALTER TABLE `group` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `group_post`
+--
+
+DROP TABLE IF EXISTS `group_post`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `group_post` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `context` varchar(500) NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `posterId` bigint unsigned NOT NULL,
+  `groupId` bigint unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `posterId` (`posterId`),
+  CONSTRAINT `group_post_ibfk_1` FOREIGN KEY (`posterId`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `group_post`
+--
+
+LOCK TABLES `group_post` WRITE;
+/*!40000 ALTER TABLE `group_post` DISABLE KEYS */;
+/*!40000 ALTER TABLE `group_post` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -134,7 +179,7 @@ CREATE TABLE `post` (
   PRIMARY KEY (`id`),
   KEY `poster_id` (`posterId`),
   CONSTRAINT `post_ibfk_1` FOREIGN KEY (`posterId`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -164,7 +209,7 @@ CREATE TABLE `post_comment` (
   KEY `postId` (`postId`),
   CONSTRAINT `post_comment_ibfk_1` FOREIGN KEY (`posterId`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   CONSTRAINT `post_comment_ibfk_2` FOREIGN KEY (`postId`) REFERENCES `post` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -192,7 +237,7 @@ CREATE TABLE `post_likes` (
   KEY `postId` (`postId`),
   CONSTRAINT `post_likes_ibfk_1` FOREIGN KEY (`likerId`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   CONSTRAINT `post_likes_ibfk_2` FOREIGN KEY (`postId`) REFERENCES `post` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -220,10 +265,11 @@ CREATE TABLE `user` (
   `password` varchar(255) NOT NULL,
   `introduction` varchar(500) NOT NULL DEFAULT '' COMMENT 'Self-introduction.',
   `tags` varchar(255) NOT NULL DEFAULT '' COMMENT 'Interests & Labels.',
+  `friendCount` int unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -233,6 +279,35 @@ CREATE TABLE `user` (
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user_group`
+--
+
+DROP TABLE IF EXISTS `user_group`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_group` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `userId` bigint unsigned NOT NULL,
+  `groupId` bigint unsigned NOT NULL,
+  `status` enum('member','in application') NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`),
+  KEY `groupId` (`groupId`),
+  CONSTRAINT `user_group_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`),
+  CONSTRAINT `user_group_ibfk_2` FOREIGN KEY (`groupId`) REFERENCES `group` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_group`
+--
+
+LOCK TABLES `user_group` WRITE;
+/*!40000 ALTER TABLE `user_group` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_group` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -244,4 +319,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-19  6:39:22
+-- Dump completed on 2023-08-01 14:26:13
