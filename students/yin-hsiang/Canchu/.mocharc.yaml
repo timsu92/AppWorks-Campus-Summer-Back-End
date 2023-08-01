@@ -3,5 +3,4 @@ extension:
   - ts
 spec:
   - test/**/*.test.ts
-watch-files:
-  - src
+timeout: 3000

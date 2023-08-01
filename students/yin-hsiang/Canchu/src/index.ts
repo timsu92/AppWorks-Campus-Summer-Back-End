@@ -88,3 +88,5 @@ app.post(`/api/${env.apiVer}/posts/:id/comment`, [jsonContentType, accessToken, 
 app.listen(port, () => {
   console.log(`Canchu backend listening on port:${port}`);
 })
+
+export { app };
