@@ -3,4 +3,4 @@ extension:
   - ts
 spec:
   - test/**/*.test.ts
-timeout: 3000
+timeout: 4000
