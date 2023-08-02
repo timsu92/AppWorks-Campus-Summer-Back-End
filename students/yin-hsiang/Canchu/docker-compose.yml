@@ -3,22 +3,22 @@ services:
     image: mysql:8
     ports:
       - "3306:3306"
-    env_file: docker.env.list
+    env_file: ./services/mysql/docker.env
     volumes:
       - type: bind
-        source: ./sqldb_dump.sql
+        source: ./services/mysql/sqldb_dump.sql
         target: /docker-entrypoint-initdb.d/sqldb_dump.sql
         read_only: true
       - type: bind
-        source: ./users.sql
-        target: /docker-entrypoint-initdb.d/users.sql
+        source: ./services/mysql/permission.sql
+        target: /docker-entrypoint-initdb.d/permission.sql
         read_only: true
       - mysql:/var/lib/mysql
     networks:
       - net
   cache:
     build:
-      dockerfile: ./Dockerfile.redis
+      context: ./services/redis
     ports:
       - "6379:6379"
     networks:
