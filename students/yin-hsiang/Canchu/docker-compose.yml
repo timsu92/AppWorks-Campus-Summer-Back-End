@@ -12,7 +12,15 @@ services:
       - type: bind
         source: ./users.sql
         target: /docker-entrypoint-initdb.d/users.sql
+        read_only: true
       - mysql:/var/lib/mysql
+    networks:
+      - net
+  cache:
+    build:
+      dockerfile: ./Dockerfile.redis
+    ports:
+      - "6379:6379"
     networks:
       - net
   web:
@@ -23,6 +31,7 @@ services:
       - net
     depends_on:
       - mysql
+      - cache
 
 volumes:
   mysql:
