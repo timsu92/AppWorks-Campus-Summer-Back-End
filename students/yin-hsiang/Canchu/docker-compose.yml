@@ -1,5 +1,32 @@
 services:
+  mysql:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    env_file: docker.env.list
+    volumes:
+      - type: bind
+        source: ./sqldb_dump.sql
+        target: /docker-entrypoint-initdb.d/sqldb_dump.sql
+        read_only: true
+      - type: bind
+        source: ./users.sql
+        target: /docker-entrypoint-initdb.d/users.sql
+      - mysql:/var/lib/mysql
+    networks:
+      - net
   web:
     build: .
     ports:
       - "3000:3000"
+    networks:
+      - net
+    depends_on:
+      - mysql
+
+volumes:
+  mysql:
+
+networks:
+  net:
+    name: my_network

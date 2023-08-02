@@ -1,0 +1,1 @@
+GRANT SELECT, DELETE, UPDATE, INSERT ON canchu.* TO 'dev'@'%';
