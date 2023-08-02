@@ -49,7 +49,16 @@ const port = 3000;
 const app = express();
 app.use(bodyParser.json());
 app.use(cors(corsOptions)); // handles all CORS on all routes and processes CORS pre-flight
-await Database.initialize();
+while (1) {
+  try {
+    await Database.initialize();
+    break;
+  } catch (err) {
+    console.warn("Can't connect to mysql. Try again in 3 seconds.");
+    console.info(err);
+    await new Promise(resolve => setTimeout(resolve, 3000));
+  }
+}
 initDbCache();
 
 app.use(new RegExp(`^(?!\/api\/${env.apiVer}\/users\/search).*`), rateLimiter()); // user search involves higher frequency of requests
