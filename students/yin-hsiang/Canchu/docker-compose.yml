@@ -24,6 +24,9 @@ services:
     # ports:
       # - "6379:6379"
     env_file: ./services/redis/passwd
+    volumes:
+      - type: tmpfs
+        target: /data
     networks:
       - net
   proxy:
