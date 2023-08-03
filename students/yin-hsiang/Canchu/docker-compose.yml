@@ -18,6 +18,7 @@ services:
       - mysql:/var/lib/mysql
     networks:
       - net
+
   cache:
     build:
       context: ./services/redis
@@ -29,6 +30,7 @@ services:
         target: /data
     networks:
       - net
+
   proxy:
     image: nginx:mainline-alpine-slim
     ports:
@@ -49,11 +51,14 @@ services:
       - nginxLog:/var/log/nginx
     networks:
       - net
+
   web:
     build: .
     # ports:
       # - "3000:3000"
     init: true
+    volumes:
+      - userPicture:/canchu/static/avatar
     networks:
       - net
     depends_on:
@@ -64,6 +69,7 @@ services:
 volumes:
   mysql:
   nginxLog:
+  userPicture:
 
 networks:
   net:
