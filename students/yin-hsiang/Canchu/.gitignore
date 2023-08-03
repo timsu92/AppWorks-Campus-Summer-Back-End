@@ -3,3 +3,4 @@
 /.env.json
 *.swp
 /static/avatar
+/services/redis/passwd
