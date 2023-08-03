@@ -27,6 +27,7 @@ services:
     build: .
     ports:
       - "3000:3000"
+    init: true
     networks:
       - net
     depends_on:
