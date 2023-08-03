@@ -3,7 +3,9 @@ services:
     image: mysql:8
     ports:
       - "3306:3306"
-    env_file: ./services/mysql/docker.env
+    env_file:
+      - ./services/mysql/docker.env
+      - ./services/mysql/passwd
     volumes:
       - type: bind
         source: ./services/mysql/sqldb_dump.sql

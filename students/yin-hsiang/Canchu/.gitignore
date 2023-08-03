@@ -4,3 +4,4 @@
 *.swp
 /static/avatar
 /services/redis/passwd
+/services/mysql/passwd
