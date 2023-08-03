@@ -26,19 +26,41 @@ services:
     env_file: ./services/redis/passwd
     networks:
       - net
+  proxy:
+    image: nginx:mainline-alpine-slim
+    ports:
+      - "443:443"
+    volumes:
+      - type: bind
+        source: ./services/nginx/cert
+        target: /cert
+        read_only: true
+      - type: bind
+        source: ./services/nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+      - type: tmpfs
+        target: /var/cache/nginx
+      - type: tmpfs
+        target: /var/run
+      - nginxLog:/var/log/nginx
+    networks:
+      - net
   web:
     build: .
-    ports:
-      - "3000:3000"
+    # ports:
+      # - "3000:3000"
     init: true
     networks:
       - net
     depends_on:
       - mysql
       - cache
+      - proxy
 
 volumes:
   mysql:
+  nginxLog:
 
 networks:
   net:

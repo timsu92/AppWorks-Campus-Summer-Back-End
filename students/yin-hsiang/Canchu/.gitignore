@@ -5,3 +5,4 @@
 /static/avatar
 /services/redis/passwd
 /services/mysql/passwd
+/services/nginx/cert
