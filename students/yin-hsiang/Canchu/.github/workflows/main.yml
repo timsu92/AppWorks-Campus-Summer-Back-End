@@ -1,0 +1,54 @@
+name: Canchu CI
+on:
+  push:
+    branches:
+      - week_*_part_*
+  workflow_dispatch:
+
+jobs:
+  compile:
+    name: compile Typescript to Javascript
+    runs-on: self-hosted
+    # does not run when commit message contains 'docs'
+    if: ${{ !contains(github.event.head_commit.message, 'docs') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install packages
+        run: |
+          npm ci --omit=optional
+          npm run build
+      - name: Cache installed packages
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            dist
+            node_modules
+          key: node_packages
+  test:
+    name: Run test suites
+    runs-on: self-hosted
+    # does not run when commit message contains 'docs'
+    if: ${{ !contains(github.event.head_commit.message, 'docs') }}
+    needs:
+      - compile
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Cache installed packages
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            dist
+            node_modules
+          key: node_packages
+      - name: Run tests
+        run: npm run test:coverage

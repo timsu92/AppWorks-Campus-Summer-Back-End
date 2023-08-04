@@ -4,6 +4,7 @@
   "description": "simple social media website",
   "main": "src/index.ts",
   "scripts": {
+    "build": "rm -rf dist && npx tsc",
     "test": "MODE=test mocha",
     "test:coverage": "MODE=test c8 mocha",
     "serve": "rm -rf dist && npx tsc && node dist/src/index.js"
