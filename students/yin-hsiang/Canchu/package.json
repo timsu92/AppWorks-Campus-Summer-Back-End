@@ -4,7 +4,8 @@
   "description": "simple social media website",
   "main": "src/index.ts",
   "scripts": {
-    "test": "MODE=test c8 mocha",
+    "test": "MODE=test mocha",
+    "test:coverage": "MODE=test c8 mocha",
     "serve": "rm -rf dist && npx tsc && node dist/src/index.js"
   },
   "author": "timsu92",
