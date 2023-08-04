@@ -4,3 +4,6 @@
 *.swp
 /static/avatar
 /coverage
+/services/redis/passwd
+/services/mysql/passwd
+/services/nginx/cert
