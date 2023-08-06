@@ -61,6 +61,12 @@ jobs:
       - name: Restore secrets
         uses: actions/cache/restore@v3
         with:
+          path: |
+            ${{ vars.REPO_BASE }}/.env.json
+            ${{ vars.REPO_BASE }}/services/redis/passwd
+            ${{ vars.REPO_BASE }}/services/mysql/passwd
+            ${{ vars.REPO_BASE }}/services/nginx/cert/certificate.crt
+            ${{ vars.REPO_BASE }}/services/nginx/cert/private.key
           key: secrets
           fail-on-cache-miss: true
       - name: Install Node.js
@@ -96,6 +102,9 @@ jobs:
       - name: Cache installed packages
         uses: actions/cache/restore@v3
         with:
+          path: |
+            dist
+            node_modules
           key: node_packages
           fail-on-cache-miss: true
       - name: Run tests
