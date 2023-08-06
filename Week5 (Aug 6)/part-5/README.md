@@ -14,7 +14,7 @@
      iii. Configure Scaling policies
    - Average CPU utilization: 50
 3. Attach your server, and observe the auto scaling group.
-4. Run the load testing again. Use the data generator to generate more posts incrementally (e.g. posts more orders at a time), and observe when the `mid` of `http_req_duration` exceeds 1 second.
+4. Run the load testing again. Use the data generator to generate more posts incrementally (e.g. posts more posts at a time), and observe when the `mid` of `http_req_duration` exceeds 1 second.
 
 Note: You will need your colleagues to assist you in this test, so that there is enough stress to force your host to scale-out.
 
