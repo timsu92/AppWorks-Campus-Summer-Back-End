@@ -82,8 +82,8 @@ jobs:
         uses: actions/cache/save@v3
         with:
           path: |
-            dist
-            node_modules
+            ${{ vars.REPO_BASE }}/dist
+            ${{ vars.REPO_BASE }}/node_modules
           key: node_packages
   test:
     name: Run test suites
@@ -103,8 +103,8 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: |
-            dist
-            node_modules
+            ${{ vars.REPO_BASE }}/dist
+            ${{ vars.REPO_BASE }}/node_modules
           key: node_packages
           fail-on-cache-miss: true
       - name: Run tests
