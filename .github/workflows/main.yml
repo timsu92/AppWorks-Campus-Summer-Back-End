@@ -21,18 +21,22 @@ jobs:
       - name: services/redis/passwd
         run: |
           cd ${{ vars.REPO_BASE }}
+          mkdir -p services/redis
           echo '${{ secrets.SERVICES_REDIS_PASSWD }}' > services/redis/passwd
       - name: services/mysql/passwd
         run: |
           cd ${{ vars.REPO_BASE }}
+          mkdir -p services/mysql
           echo '${{ secrets.SERVICES_MYSQL_PASSWD }}' > services/mysql/passwd
       - name: services/nginx/cert/certificate.crt
         run: |
           cd ${{ vars.REPO_BASE }}
+          mkdir -p services/nginx/cert
           echo '${{ secrets.SERVICES_NGINX_CERT_CERTIFICATE_CRT }}' > services/nginx/cert/certificate.crt
       - name: services/nginx/cert/private.key
         run: |
           cd ${{ vars.REPO_BASE }}
+          mkdir -p services/nginx/cert
           echo '${{ secrets.SERVICES_NGINX_CERT_PRIVATE_KEY }}' > services/nginx/cert/private.key
       - name: Cache secrets
         uses: actions/cache/save@v3
