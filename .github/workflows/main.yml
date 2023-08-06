@@ -99,6 +99,17 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Restore secrets
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ${{ vars.REPO_BASE }}/.env.json
+            ${{ vars.REPO_BASE }}/services/redis/passwd
+            ${{ vars.REPO_BASE }}/services/mysql/passwd
+            ${{ vars.REPO_BASE }}/services/nginx/cert/certificate.crt
+            ${{ vars.REPO_BASE }}/services/nginx/cert/private.key
+          key: secrets
+          fail-on-cache-miss: true
       - name: Cache installed packages
         uses: actions/cache/restore@v3
         with:
