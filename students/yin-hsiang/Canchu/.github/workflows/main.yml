@@ -6,14 +6,59 @@ on:
   workflow_dispatch:
 
 jobs:
-  compile:
-    name: compile Typescript to Javascript
+  emit_secrets:
+    name: write environment variables
     runs-on: self-hosted
     # does not run when commit message contains 'docs'
     if: ${{ !contains(github.event.head_commit.message, 'docs') }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: .env.json
+        run: |
+          cd ${{ env.REPO_BASE }}
+          echo '${{ secrets.ENV_JSON }}' > .env.json
+      - name: services/redis/passwd
+        run: |
+          cd ${{ env.REPO_BASE }}
+          echo '${{ secrets.SERVICES_REDIS_PASSWD }}' > services/redis/passwd
+      - name: services/mysql/passwd
+        run: |
+          cd ${{ env.REPO_BASE }}
+          echo '${{ secrets.SERVICES_MYSQL_PASSWD }}' > services/mysql/passwd
+      - name: services/nginx/cert/certificate.crt
+        run: |
+          cd ${{ env.REPO_BASE }}
+          echo '${{ secrets.SERVICES_NGINX_CERT_CERTIFICATE_CRT }}' > services/nginx/cert/certificate.crt
+      - name: services/nginx/cert/private.key
+        run: |
+          cd ${{ env.REPO_BASE }}
+          echo '${{ secrets.SERVICES_NGINX_CERT_PRIVATE_KEY }}' > services/nginx/cert/private.key
+      - name: Cache secrets
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ${{ env.REPO_BASE }}/.env.json
+            ${{ env.REPO_BASE }}/services/redis/passwd
+            ${{ env.REPO_BASE }}/services/mysql/passwd
+            ${{ env.REPO_BASE }}/services/nginx/cert/certificate.crt
+            ${{ env.REPO_BASE }}/services/nginx/cert/private.key
+          key: secrets
+  compile:
+    name: compile Typescript to Javascript
+    runs-on: self-hosted
+    # does not run when commit message contains 'docs'
+    if: ${{ !contains(github.event.head_commit.message, 'docs') }}
+    needs:
+      - emit_secrets
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Restore secrets
+        uses: actions/cache/restore@v3
+        with:
+          key: secrets
+          fail-on-cache-miss: true
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
@@ -46,9 +91,7 @@ jobs:
       - name: Cache installed packages
         uses: actions/cache/restore@v3
         with:
-          path: |
-            dist
-            node_modules
           key: node_packages
+          fail-on-cache-miss: true
       - name: Run tests
         run: npm run test:coverage
