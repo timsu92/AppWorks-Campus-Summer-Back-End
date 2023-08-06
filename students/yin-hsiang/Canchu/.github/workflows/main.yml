@@ -65,6 +65,7 @@ jobs:
           node-version: 18
       - name: Install packages
         run: |
+          cd ${{ env.REPO_BASE }}
           npm ci --omit=optional
           npm run build
       - name: Cache installed packages
@@ -94,4 +95,6 @@ jobs:
           key: node_packages
           fail-on-cache-miss: true
       - name: Run tests
-        run: npm run test:coverage
+        run: |
+          cd ${{ env.REPO_BASE }}
+          npm run test:coverage
