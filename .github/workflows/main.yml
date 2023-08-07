@@ -100,6 +100,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Install compatible tar
+        run: apk add --no-cache tar
       - name: Restore secrets
         uses: actions/cache/restore@v3
         with:
