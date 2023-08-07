@@ -47,7 +47,7 @@ jobs:
             ${{ vars.REPO_BASE }}/services/mysql/passwd
             ${{ vars.REPO_BASE }}/services/nginx/cert/certificate.crt
             ${{ vars.REPO_BASE }}/services/nginx/cert/private.key
-          key: secrets
+          key: secrets-${{ github.sha }}
   compile:
     name: compile Typescript to Javascript
     runs-on: self-hosted
@@ -67,7 +67,7 @@ jobs:
             ${{ vars.REPO_BASE }}/services/mysql/passwd
             ${{ vars.REPO_BASE }}/services/nginx/cert/certificate.crt
             ${{ vars.REPO_BASE }}/services/nginx/cert/private.key
-          key: secrets
+          key: secrets-${{ github.sha }}
           fail-on-cache-miss: true
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -84,7 +84,7 @@ jobs:
           path: |
             ${{ vars.REPO_BASE }}/dist
             ${{ vars.REPO_BASE }}/node_modules
-          key: node_packages
+          key: node_packages-${{ github.sha }}
   test:
     name: Run test suites
     runs-on: self-hosted
@@ -108,7 +108,7 @@ jobs:
             ${{ vars.REPO_BASE }}/services/mysql/passwd
             ${{ vars.REPO_BASE }}/services/nginx/cert/certificate.crt
             ${{ vars.REPO_BASE }}/services/nginx/cert/private.key
-          key: secrets
+          key: secrets-${{ github.sha }}
           fail-on-cache-miss: true
       - name: Restore installed packages
         uses: actions/cache/restore@v3
@@ -116,7 +116,7 @@ jobs:
           path: |
             ${{ vars.REPO_BASE }}/dist
             ${{ vars.REPO_BASE }}/node_modules
-          key: node_packages
+          key: node_packages-${{ github.sha }}
           fail-on-cache-miss: true
       - name: Build and run Docker images
         uses: isbang/compose-action@v1.5.0
