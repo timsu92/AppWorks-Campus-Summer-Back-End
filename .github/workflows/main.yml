@@ -130,3 +130,46 @@ jobs:
         run: |
           cd ${{ vars.REPO_BASE }}
           docker exec canchu-web-1 sh -c "cd /canchu && npm ci --omit=optional && npm run test:coverage"
+  deploy:
+    name: Deploy to EC2
+    runs-on: self-hosted
+    # does not run when commit message contains 'docs'
+    if: ${{ !startsWith(github.event.head_commit.message, 'docs') }}
+    needs:
+      - test
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_ADDR }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_LOGIN_KEY }}
+          timeout: 10s
+          script_stop: true
+          script: |
+            cd ~/canchu
+            docker compose down --remove-orphans
+            git fetch origin
+            echo "git switching to ${ GITHUB_REF#refs/heads/ }"
+            git switch --force ${ GITHUB_REF#refs/heads/ }
+            echo '${{ secrets.ENV_JSON }}' > .env.json && echo "wrote .env.json"
+            echo '${{ secrets.SERVICES_REDIS_PASSWD }}' > services/redis/passwd && echo "wrote services/redis/passwd"
+            echo '${{ secrets.SERVICES_MYSQL_PASSWD }}' > services/mysql/passwd && echo "wrote services/mysql/passwd"
+            echo '${{ secrets.SERVICES_NGINX_CERT_CERTIFICATE_CRT }}' > services/nginx/cert/certificate.crt && echo "wrote services/nginx/cert/certificate.crt"
+            echo '${{ secrets.SERVICES_NGINX_CERT_PRIVATE_KEY }}' > services/nginx/cert/private.key && echo "wrote services/nginx/cert/private.key"
+            echo '===Starting docker compose==='
+            docker compose up --build -d
+            timeout 3 bash -c 'while [[ $(docker ps --filter=status=running --quiet | wc -l) -ne 4 ]]; do echo "waiting for containers to up..."; sleep 1; done'
+            echo "container started"
+            docker builder prune -af > /dev/null
+            echo "waiting at most 60 seconds for all services to start..."
+            timeout 60 bash -c 'while true; do \
+              [[ $(docker container logs canchu-web-1 2>/dev/null | tail -n 1 | grep "Canchu backend listening on port:") ]]; \
+              if [[ $? -eq 0 ]]; then \
+                echo "backend started successfully"
+                break; \
+              else \
+                echo "starting up..."; \
+                sleep 3; \
+              fi
+              done'
