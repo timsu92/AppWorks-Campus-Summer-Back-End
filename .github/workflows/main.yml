@@ -122,10 +122,6 @@ jobs:
         uses: isbang/compose-action@v1.5.0
         with:
           compose-file: ${{ vars.REPO_BASE }}/docker-compose.yml
-          services: |
-            mysql
-            cache
-            proxy
           up-flags: --build
           down-flags: --remove-orphans --rmi=local --volumes
       - name: Run tests

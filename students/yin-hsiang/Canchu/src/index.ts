@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import "reflect-metadata";
 import cors from 'cors';
+import { env as envvar } from 'process';
 
 import env from '../.env.json' assert { type: "json" };
 // routes
@@ -43,7 +44,10 @@ const corsOptions: cors.CorsOptions = {
   "methods": "GET,PUT,POST,DELETE",
   "allowedHeaders": ["Authorization", "Content-Type"]
 }
-const port = 3000;
+let port = 3000;
+if (envvar.MODE === "test") {
+  port = 3001;
+}
 
 //
 const app = express();
