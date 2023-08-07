@@ -9,6 +9,10 @@ import { Post, PostComment, PostLikes } from "./entity/post.js";
 
 const dbCfg = envvar.MODE === "test" ? { ...env.sqlCfg, "database": "canchuTest" } : env.sqlCfg;
 
+if (envvar.MODE === "test") {
+  console.info("DB running in test mode");
+}
+
 export const Database = new DataSource({
   type: "mysql",
   ...dbCfg,
