@@ -10,7 +10,7 @@ jobs:
     name: write environment variables
     runs-on: self-hosted
     # does not run when commit message contains 'docs'
-    if: ${{ !contains(github.event.head_commit.message, 'docs') }}
+    if: ${{ !startsWith(github.event.head_commit.message, 'docs') }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -52,7 +52,7 @@ jobs:
     name: compile Typescript to Javascript
     runs-on: self-hosted
     # does not run when commit message contains 'docs'
-    if: ${{ !contains(github.event.head_commit.message, 'docs') }}
+    if: ${{ !startsWith(github.event.head_commit.message, 'docs') }}
     needs:
       - emit_secrets
     steps:
@@ -89,7 +89,7 @@ jobs:
     name: Run test suites
     runs-on: self-hosted
     # does not run when commit message contains 'docs'
-    if: ${{ !contains(github.event.head_commit.message, 'docs') }}
+    if: ${{ !startsWith(github.event.head_commit.message, 'docs') }}
     needs:
       - compile
     steps:
