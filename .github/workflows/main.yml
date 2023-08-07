@@ -110,7 +110,7 @@ jobs:
             ${{ vars.REPO_BASE }}/services/nginx/cert/private.key
           key: secrets
           fail-on-cache-miss: true
-      - name: Cache installed packages
+      - name: Restore installed packages
         uses: actions/cache/restore@v3
         with:
           path: |
@@ -118,7 +118,19 @@ jobs:
             ${{ vars.REPO_BASE }}/node_modules
           key: node_packages
           fail-on-cache-miss: true
+      - name: Build and run Docker images
+        uses: isbang/compose-action@v1.5.0
+        with:
+          compose-file: ${{ vars.REPO_BASE }}/docker-compose.yml
+          services: |
+            mysql
+            cache
+            proxy
+          up-flags: --build
+          down-flags: --remove-orphans --rmi=local --volumes
       - name: Run tests
+        env:
+          MODE: "test"
         run: |
           cd ${{ vars.REPO_BASE }}
-          npm run test:coverage
+          docker exec canchu-web-1 npm run test:coverage
