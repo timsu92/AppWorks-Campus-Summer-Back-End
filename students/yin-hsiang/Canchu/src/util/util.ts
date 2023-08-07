@@ -1,4 +1,5 @@
 import express from 'express';
+import { env as envvar } from 'process';
 
 import env from '../../.env.json' assert {type: "json"};
 import { newRedis } from '../db/cache/lib.js';
@@ -45,6 +46,9 @@ export function rateLimiter(requestInASecond: number = 10) {
     const NORMAL_COUNT = requestInASecond * NORMAL_DURATION;
     const BLOCK_DURATION = 30;
 
+    if (envvar.MODE === "test") {
+      return next();
+    }
     const redis = newRedis();
     const clientIp = req.headers['x-forwarded-for'];
     const isNewUser = await redis.set(`operateCount:${clientIp}`, 1, "EX", NORMAL_DURATION, "NX");
