@@ -88,7 +88,6 @@ jobs:
   test:
     name: Run test suites
     runs-on: self-hosted
-    container: docker:dind-rootless
     # does not run when commit message contains 'docs'
     if: ${{ !contains(github.event.head_commit.message, 'docs') }}
     needs:
@@ -100,8 +99,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Install compatible tar
-        run: apk add --no-cache tar
       - name: Restore secrets
         uses: actions/cache/restore@v3
         with:
