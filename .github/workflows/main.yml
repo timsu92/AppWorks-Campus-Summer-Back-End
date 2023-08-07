@@ -129,6 +129,4 @@ jobs:
           MODE: "test"
         run: |
           cd ${{ vars.REPO_BASE }}
-          docker image ls
-          docker container ls
-          docker exec canchu-web-1 npm run test:coverage
+          docker exec canchu-web-1 sh -c "cd /canchu && npm ci --omit=optional && npm run test:coverage"
