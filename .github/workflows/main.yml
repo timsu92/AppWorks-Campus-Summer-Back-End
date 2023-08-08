@@ -164,6 +164,9 @@ jobs:
             git remote set-url origin https://timsu92:${{ secrets.READ_ONLY_PAT }}@github.com/timsu92/Campus-Summer-Back-End.git
             git fetch origin
             git remote set-url origin https://github.com/timsu92/Campus-Summer-Back-End.git
+            git switch --force main
+            # remove the branch to ensure getting the right commit
+            git branch -D $BRANCH; true
             echo "git switching to $BRANCH"
             git switch --force $BRANCH
             echo "$ENV_JSON" > .env.json && echo "wrote .env.json"
