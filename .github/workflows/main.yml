@@ -138,13 +138,20 @@ jobs:
     needs:
       - test
     steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+        id: extract_branch
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.0
+        env:
+          BRANCH: ${{ steps.extract_branch.outputs.branch }}
         with:
           host: ${{ secrets.EC2_ADDR }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_LOGIN_KEY }}
           timeout: 10s
+          envs: BRANCH
           script_stop: true
           script: |
             cd ~/canchu
@@ -152,8 +159,8 @@ jobs:
             git remote set-url origin https://timsu92:${{ secrets.READ_ONLY_PAT }}@github.com/timsu92/Campus-Summer-Back-End.git
             git fetch origin
             git remote set-url origin https://github.com/timsu92/Campus-Summer-Back-End.git
-            echo "git switching to ${ GITHUB_REF#refs/heads/ }"
-            git switch --force ${ GITHUB_REF#refs/heads/ }
+            echo "git switching to $BRANCH"
+            git switch --force $BRANCH
             echo '${{ secrets.ENV_JSON }}' > .env.json && echo "wrote .env.json"
             echo '${{ secrets.SERVICES_REDIS_PASSWD }}' > services/redis/passwd && echo "wrote services/redis/passwd"
             echo '${{ secrets.SERVICES_MYSQL_PASSWD }}' > services/mysql/passwd && echo "wrote services/mysql/passwd"
