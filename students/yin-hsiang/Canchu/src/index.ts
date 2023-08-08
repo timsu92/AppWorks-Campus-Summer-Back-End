@@ -44,10 +44,7 @@ const corsOptions: cors.CorsOptions = {
   "methods": "GET,PUT,POST,DELETE",
   "allowedHeaders": ["Authorization", "Content-Type"]
 }
-let port = 3000;
-if (envvar.MODE === "test") {
-  port = 3001;
-}
+const port = envvar.MODE === "test" ? 3001 : 3000;
 
 //
 const app = express();
