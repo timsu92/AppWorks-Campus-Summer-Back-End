@@ -146,12 +146,17 @@ jobs:
         uses: appleboy/ssh-action@v1.0.0
         env:
           BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          ENV_JSON: ${{ secrets.ENV_JSON }}
+          SERVICES_REDIS_PASSWD: ${{ secrets.SERVICES_REDIS_PASSWD }}
+          SERVICES_MYSQL_PASSWD: ${{ secrets.SERVICES_MYSQL_PASSWD }}
+          SERVICES_NGINX_CERT_CERTIFICATE_CRT: ${{ secrets.SERVICES_NGINX_CERT_CERTIFICATE_CRT }}
+          SERVICES_NGINX_CERT_PRIVATE_KEY: ${{ secrets.SERVICES_NGINX_CERT_PRIVATE_KEY }}
         with:
           host: ${{ secrets.EC2_ADDR }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_LOGIN_KEY }}
           timeout: 10s
-          envs: BRANCH
+          envs: BRANCH,ENV_JSON,SERVICES_REDIS_PASSWD,SERVICES_MYSQL_PASSWD,SERVICES_NGINX_CERT_CERTIFICATE_CRT,SERVICES_NGINX_CERT_PRIVATE_KEY
           script_stop: true
           script: |
             cd ~/canchu
@@ -161,11 +166,11 @@ jobs:
             git remote set-url origin https://github.com/timsu92/Campus-Summer-Back-End.git
             echo "git switching to $BRANCH"
             git switch --force $BRANCH
-            echo '${{ secrets.ENV_JSON }}' > .env.json && echo "wrote .env.json"
-            echo '${{ secrets.SERVICES_REDIS_PASSWD }}' > services/redis/passwd && echo "wrote services/redis/passwd"
-            echo '${{ secrets.SERVICES_MYSQL_PASSWD }}' > services/mysql/passwd && echo "wrote services/mysql/passwd"
-            echo '${{ secrets.SERVICES_NGINX_CERT_CERTIFICATE_CRT }}' > services/nginx/cert/certificate.crt && echo "wrote services/nginx/cert/certificate.crt"
-            echo '${{ secrets.SERVICES_NGINX_CERT_PRIVATE_KEY }}' > services/nginx/cert/private.key && echo "wrote services/nginx/cert/private.key"
+            echo '$ENV_JSON' > .env.json && echo "wrote .env.json"
+            echo '$SERVICES_REDIS_PASSWD' > services/redis/passwd && echo "wrote services/redis/passwd"
+            echo '$SERVICES_MYSQL_PASSWD' > services/mysql/passwd && echo "wrote services/mysql/passwd"
+            echo '$SERVICES_NGINX_CERT_CERTIFICATE_CRT' > services/nginx/cert/certificate.crt && echo "wrote services/nginx/cert/certificate.crt"
+            echo '$SERVICES_NGINX_CERT_PRIVATE_KEY' > services/nginx/cert/private.key && echo "wrote services/nginx/cert/private.key"
             echo '===Starting docker compose==='
             docker compose up --build -d
             timeout 3 bash -c 'while [[ $(docker ps --filter=status=running --quiet | wc -l) -ne 4 ]]; do echo "waiting for containers to up..."; sleep 1; done'
