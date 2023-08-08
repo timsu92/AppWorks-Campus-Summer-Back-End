@@ -178,7 +178,11 @@ jobs:
             docker compose up --build -d
             timeout 3 bash -c 'while [[ $(docker ps --filter=status=running --quiet | wc -l) -ne 4 ]]; do echo "waiting for containers to up..."; sleep 1; done'
             echo "container started"
-            docker builder prune -af > /dev/null
+            docker container prune --force
+            docker image prune --all --force
+            docker volume prune --all --force
+            docker builder prune --all --force
+            docker system prune --all --force
             echo "waiting at most 60 seconds for all services to start..."
             timeout 60 bash -c 'while true; do \
               [[ $(docker container logs canchu-web-1 2>/dev/null | tail -n 1 | grep "Canchu backend listening on port:") ]]; \
