@@ -149,7 +149,9 @@ jobs:
           script: |
             cd ~/canchu
             docker compose down --remove-orphans
+            git remote set-url origin https://timsu92:${{ secrets.READ_ONLY_PAT }}@github.com/timsu92/Campus-Summer-Back-End.git
             git fetch origin
+            git remote set-url origin https://github.com/timsu92/Campus-Summer-Back-End.git
             echo "git switching to ${ GITHUB_REF#refs/heads/ }"
             git switch --force ${ GITHUB_REF#refs/heads/ }
             echo '${{ secrets.ENV_JSON }}' > .env.json && echo "wrote .env.json"
