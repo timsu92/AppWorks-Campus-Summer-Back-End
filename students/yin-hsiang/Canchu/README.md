@@ -1,5 +1,7 @@
 # Canchu
 
+[![Canchu CI](https://github.com/timsu92/Campus-Summer-Back-End/actions/workflows/main.yml/badge.svg)](https://github.com/timsu92/Campus-Summer-Back-End/actions/workflows/main.yml)
+
 ## Week0 part-2：開AWS EC2機器
 
 [網站位置](http://44.217.7.202/)
