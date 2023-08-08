@@ -166,11 +166,11 @@ jobs:
             git remote set-url origin https://github.com/timsu92/Campus-Summer-Back-End.git
             echo "git switching to $BRANCH"
             git switch --force $BRANCH
-            echo '$ENV_JSON' > .env.json && echo "wrote .env.json"
-            echo '$SERVICES_REDIS_PASSWD' > services/redis/passwd && echo "wrote services/redis/passwd"
-            echo '$SERVICES_MYSQL_PASSWD' > services/mysql/passwd && echo "wrote services/mysql/passwd"
-            echo '$SERVICES_NGINX_CERT_CERTIFICATE_CRT' > services/nginx/cert/certificate.crt && echo "wrote services/nginx/cert/certificate.crt"
-            echo '$SERVICES_NGINX_CERT_PRIVATE_KEY' > services/nginx/cert/private.key && echo "wrote services/nginx/cert/private.key"
+            echo "$ENV_JSON" > .env.json && echo "wrote .env.json"
+            echo "$SERVICES_REDIS_PASSWD" > services/redis/passwd && echo "wrote services/redis/passwd"
+            echo "$SERVICES_MYSQL_PASSWD" > services/mysql/passwd && echo "wrote services/mysql/passwd"
+            echo "$SERVICES_NGINX_CERT_CERTIFICATE_CRT" > services/nginx/cert/certificate.crt && echo "wrote services/nginx/cert/certificate.crt"
+            echo "$SERVICES_NGINX_CERT_PRIVATE_KEY" > services/nginx/cert/private.key && echo "wrote services/nginx/cert/private.key"
             echo '===Starting docker compose==='
             docker compose up --build -d
             timeout 3 bash -c 'while [[ $(docker ps --filter=status=running --quiet | wc -l) -ne 4 ]]; do echo "waiting for containers to up..."; sleep 1; done'
