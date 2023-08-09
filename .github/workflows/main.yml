@@ -1,0 +1,196 @@
+name: Canchu CI
+on:
+  push:
+    branches:
+      - week_*_part_*
+  workflow_dispatch:
+
+jobs:
+  emit_secrets:
+    name: write environment variables
+    runs-on: self-hosted
+    # does not run when commit message contains 'docs'
+    if: ${{ !startsWith(github.event.head_commit.message, 'docs') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: .env.json
+        run: |
+          cd ${{ vars.REPO_BASE }}
+          echo '${{ secrets.ENV_JSON }}' > .env.json
+      - name: services/redis/passwd
+        run: |
+          cd ${{ vars.REPO_BASE }}
+          mkdir -p services/redis
+          echo '${{ secrets.SERVICES_REDIS_PASSWD }}' > services/redis/passwd
+      - name: services/mysql/passwd
+        run: |
+          cd ${{ vars.REPO_BASE }}
+          mkdir -p services/mysql
+          echo '${{ secrets.SERVICES_MYSQL_PASSWD }}' > services/mysql/passwd
+      - name: services/nginx/cert/certificate.crt
+        run: |
+          cd ${{ vars.REPO_BASE }}
+          mkdir -p services/nginx/cert
+          echo '${{ secrets.SERVICES_NGINX_CERT_CERTIFICATE_CRT }}' > services/nginx/cert/certificate.crt
+      - name: services/nginx/cert/private.key
+        run: |
+          cd ${{ vars.REPO_BASE }}
+          mkdir -p services/nginx/cert
+          echo '${{ secrets.SERVICES_NGINX_CERT_PRIVATE_KEY }}' > services/nginx/cert/private.key
+      - name: Cache secrets
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ${{ vars.REPO_BASE }}/.env.json
+            ${{ vars.REPO_BASE }}/services/redis/passwd
+            ${{ vars.REPO_BASE }}/services/mysql/passwd
+            ${{ vars.REPO_BASE }}/services/nginx/cert/certificate.crt
+            ${{ vars.REPO_BASE }}/services/nginx/cert/private.key
+          key: secrets-${{ github.sha }}
+  compile:
+    name: compile Typescript to Javascript
+    runs-on: self-hosted
+    # does not run when commit message contains 'docs'
+    if: ${{ !startsWith(github.event.head_commit.message, 'docs') }}
+    needs:
+      - emit_secrets
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Restore secrets
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ${{ vars.REPO_BASE }}/.env.json
+            ${{ vars.REPO_BASE }}/services/redis/passwd
+            ${{ vars.REPO_BASE }}/services/mysql/passwd
+            ${{ vars.REPO_BASE }}/services/nginx/cert/certificate.crt
+            ${{ vars.REPO_BASE }}/services/nginx/cert/private.key
+          key: secrets-${{ github.sha }}
+          fail-on-cache-miss: true
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install packages
+        run: |
+          cd ${{ vars.REPO_BASE }}
+          npm ci --omit=optional
+          npm run build
+      - name: Cache installed packages
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ${{ vars.REPO_BASE }}/dist
+            ${{ vars.REPO_BASE }}/node_modules
+          key: node_packages-${{ github.sha }}
+  test:
+    name: Run test suites
+    runs-on: self-hosted
+    # does not run when commit message contains 'docs'
+    if: ${{ !startsWith(github.event.head_commit.message, 'docs') }}
+    needs:
+      - compile
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Restore secrets
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ${{ vars.REPO_BASE }}/.env.json
+            ${{ vars.REPO_BASE }}/services/redis/passwd
+            ${{ vars.REPO_BASE }}/services/mysql/passwd
+            ${{ vars.REPO_BASE }}/services/nginx/cert/certificate.crt
+            ${{ vars.REPO_BASE }}/services/nginx/cert/private.key
+          key: secrets-${{ github.sha }}
+          fail-on-cache-miss: true
+      - name: Restore installed packages
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            ${{ vars.REPO_BASE }}/dist
+            ${{ vars.REPO_BASE }}/node_modules
+          key: node_packages-${{ github.sha }}
+          fail-on-cache-miss: true
+      - name: Build and run Docker images
+        uses: isbang/compose-action@v1.5.0
+        with:
+          compose-file: ${{ vars.REPO_BASE }}/docker-compose.yml
+          up-flags: --build
+          down-flags: --remove-orphans --rmi=local --volumes
+      - name: Run tests
+        env:
+          MODE: "test"
+        run: |
+          cd ${{ vars.REPO_BASE }}
+          docker exec canchu-web-1 sh -c "cd /canchu && npm ci --omit=optional && npm run test:coverage"
+  deploy:
+    name: Deploy to EC2
+    runs-on: self-hosted
+    # does not run when commit message contains 'docs'
+    if: ${{ !startsWith(github.event.head_commit.message, 'docs') }}
+    needs:
+      - test
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+        id: extract_branch
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        env:
+          BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          ENV_JSON: ${{ secrets.ENV_JSON }}
+          SERVICES_REDIS_PASSWD: ${{ secrets.SERVICES_REDIS_PASSWD }}
+          SERVICES_MYSQL_PASSWD: ${{ secrets.SERVICES_MYSQL_PASSWD }}
+          SERVICES_NGINX_CERT_CERTIFICATE_CRT: ${{ secrets.SERVICES_NGINX_CERT_CERTIFICATE_CRT }}
+          SERVICES_NGINX_CERT_PRIVATE_KEY: ${{ secrets.SERVICES_NGINX_CERT_PRIVATE_KEY }}
+        with:
+          host: ${{ secrets.EC2_ADDR }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_LOGIN_KEY }}
+          timeout: 10s
+          envs: BRANCH,ENV_JSON,SERVICES_REDIS_PASSWD,SERVICES_MYSQL_PASSWD,SERVICES_NGINX_CERT_CERTIFICATE_CRT,SERVICES_NGINX_CERT_PRIVATE_KEY
+          script_stop: true
+          script: |
+            cd ~/canchu
+            docker compose down --remove-orphans
+            git remote set-url origin https://timsu92:${{ secrets.READ_ONLY_PAT }}@github.com/timsu92/Campus-Summer-Back-End.git
+            git fetch origin
+            git remote set-url origin https://github.com/timsu92/Campus-Summer-Back-End.git
+            git switch --force main
+            # remove the branch to ensure getting the right commit
+            git branch -D $BRANCH; true
+            echo "git switching to $BRANCH"
+            git switch --force $BRANCH
+            echo "$ENV_JSON" > .env.json && echo "wrote .env.json"
+            echo "$SERVICES_REDIS_PASSWD" > services/redis/passwd && echo "wrote services/redis/passwd"
+            echo "$SERVICES_MYSQL_PASSWD" > services/mysql/passwd && echo "wrote services/mysql/passwd"
+            echo "$SERVICES_NGINX_CERT_CERTIFICATE_CRT" > services/nginx/cert/certificate.crt && echo "wrote services/nginx/cert/certificate.crt"
+            echo "$SERVICES_NGINX_CERT_PRIVATE_KEY" > services/nginx/cert/private.key && echo "wrote services/nginx/cert/private.key"
+            echo '===Starting docker compose==='
+            docker compose up --build -d
+            timeout 3 bash -c 'while [[ $(docker ps --filter=status=running --quiet | wc -l) -ne 4 ]]; do echo "waiting for containers to up..."; sleep 1; done'
+            echo "container started"
+            docker container prune --force
+            docker image prune --all --force
+            docker volume prune --all --force
+            docker builder prune --all --force
+            docker system prune --all --force
+            echo "waiting at most 60 seconds for all services to start..."
+            timeout 60 bash -c 'while true; do \
+              [[ $(docker container logs canchu-web-1 2>/dev/null | tail -n 1 | grep "Canchu backend listening on port:") ]]; \
+              if [[ $? -eq 0 ]]; then \
+                echo "backend started successfully"
+                break; \
+              else \
+                echo "starting up..."; \
+                sleep 3; \
+              fi
+              done'

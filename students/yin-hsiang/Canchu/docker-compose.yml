@@ -9,11 +9,11 @@ services:
     volumes:
       - type: bind
         source: ./services/mysql/sqldb_dump.sql
-        target: /docker-entrypoint-initdb.d/sqldb_dump.sql
+        target: /docker-entrypoint-initdb.d/00_sqldb_dump.sql
         read_only: true
       - type: bind
         source: ./services/mysql/permission.sql
-        target: /docker-entrypoint-initdb.d/permission.sql
+        target: /docker-entrypoint-initdb.d/01_permission.sql
         read_only: true
       - mysql:/var/lib/mysql
     networks:

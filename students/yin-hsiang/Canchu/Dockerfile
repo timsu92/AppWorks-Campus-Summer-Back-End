@@ -1,7 +1,8 @@
 FROM node:18-alpine
 WORKDIR /canchu
 COPY src src
-COPY .env.json package-lock.json package.json tsconfig.json ./
+COPY test test
+COPY .env.json package-lock.json package.json tsconfig.json .mocharc.yaml ./
 RUN npm ci && \
     npx tsc && \
     npm ci --omit=dev --omit=optional && \
