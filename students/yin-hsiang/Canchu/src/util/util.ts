@@ -42,13 +42,13 @@ export function rateLimiter(requestInASecond: number = 10) {
     res: express.Response,
     next: express.NextFunction
   ) {
+    // disable rate limiter
+    return next();
+
     const NORMAL_DURATION = 1;
     const NORMAL_COUNT = requestInASecond * NORMAL_DURATION;
     const BLOCK_DURATION = 30;
 
-    if (envvar.MODE === "test") {
-      return next();
-    }
     const redis = newRedis();
     const clientIp = req.headers['x-forwarded-for'];
     const isNewUser = await redis.set(`operateCount:${clientIp}`, 1, "EX", NORMAL_DURATION, "NX");
