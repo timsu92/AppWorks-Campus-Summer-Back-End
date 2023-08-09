@@ -18,7 +18,7 @@ async function main() {
   const bar = new SingleBar({});
   bar.start(5000, 0);
 
-  for(let _=0 ; _ < 5000 ; ++_){
+  for (let _ = 0; _ < 5000; ++_) {
     await Post.insert({
       "posterId": usr.id,
       "context": randomBytes(randomInt(10)).toString("utf8")
