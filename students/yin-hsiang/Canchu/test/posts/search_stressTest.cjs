@@ -13,7 +13,7 @@ export const options = {
       timeUnit: '1s',
       duration: '20s',
       preAllocatedVUs: 50,
-      maxVUs: 100,
+      maxVUs: 150,
     },
   },
   insecureSkipTLSVerify: true,
