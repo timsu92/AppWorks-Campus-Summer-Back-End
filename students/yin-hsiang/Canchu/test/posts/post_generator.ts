@@ -26,7 +26,8 @@ async function main() {
     bar.increment();
   }
 
+  bar.stop();
   await Database.destroy()
 }
 
-main();
+await main();
