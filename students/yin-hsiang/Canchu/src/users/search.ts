@@ -1,5 +1,6 @@
 import express from 'express';
 import mysql from 'mysql2';
+import { env as envvar } from 'process';
 
 import env from "../../.env.json" assert {type: "json"};
 import { AccessTokenSuccessBody } from './auth.js';
@@ -21,7 +22,16 @@ export default async function (
   }
   const userId = req.body.loginUserId;
 
-  const conn = mysql.createConnection(env.sqlCfgOld);
+  const conn = mysql.createConnection({
+    host: envvar.TARGET === "local" || envvar.MODE === "test"
+      ? "canchu-mysql-1" : env.RDSAddr,
+    ...env.sqlUser,
+    database: envvar.MODE === "test"
+      ? "canchuTest"
+      : "canchu",
+    waitForConnections: true,
+    connectionLimit: 3
+  });
   try {
     conn.query(`
       SELECT
