@@ -8,7 +8,7 @@ We can build `message queue` to provide a better user experience to your clients
 
 The basic architecture of a message queue is simple. Input services, called producers/publishers, create messages (or jobs), and publish them to a message queue. Other services, called consumers/subscribers, connect to the queue, and perform actions defined by the messages.
 
-![image](<https://github.com/AppWorks-School-Materials/Campus-Summer-Back-End/blob/advance/Week-6%20(by%20Aug%2013)/part-2/message-queue.png>)
+![image](<https://github.com/AppWorks-School-Materials/Campus-Summer-Back-End/blob/advance/Week6%20(by%20Aug%2013)/part-2/message-queue.png>)
 
 ### Generate fake posts data:
 
