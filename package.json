@@ -10,7 +10,7 @@
     "serve": "rm -rf dist && npx tsc && node dist/src/index.js"
   },
   "author": "timsu92",
-  "license": "ISC",
+  "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "dependencies": {
     "bcrypt": "^5.1.0",
