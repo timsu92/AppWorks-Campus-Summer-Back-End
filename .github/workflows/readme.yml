@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          curl https://raw.githubusercontent.com/ekalinin/github-markdown-toc/0.8.0/gh-md-toc -o gh-md-toc
+          curl https://raw.githubusercontent.com/ekalinin/github-markdown-toc/661b5c5111f47174e2d9092c8d76867e5a1f249d/gh-md-toc -o gh-md-toc
           chmod a+x gh-md-toc
           GH_TOC_TOKEN=${{ secrets.GITHUB_TOKEN }} ./gh-md-toc --insert --no-backup --hide-footer --skip-header README.md
           rm gh-md-toc
