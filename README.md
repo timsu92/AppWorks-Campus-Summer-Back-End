@@ -53,13 +53,13 @@
 
 - services/redis/passwd
 
-    ```json
+    ```
     REDIS_PASSWORD=*********
     ```
 
 - services/mysql/passwd
 
-    ```json
+    ```
     MYSQL_PASSWORD=********
     MYSQL_ROOT_PASSWORD=***********
     ```
