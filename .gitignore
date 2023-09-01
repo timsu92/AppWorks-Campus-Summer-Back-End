@@ -7,3 +7,4 @@
 /services/redis/passwd
 /services/mysql/passwd
 /services/nginx/cert
+/docs

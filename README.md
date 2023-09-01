@@ -72,7 +72,6 @@
 | `README.md` | 本說明檔 |
 | `test`、`.mocharc.yaml` | 本專案使用[mocha](https://mochajs.org/)進行測試，但並沒有完成撰寫所有的測試 |
 | `LICENSE`、`COPYING` | 本專案因為使用的相關套件，以GPL v3授權 |
-| docs | 當初製作時的指引 |
 
 本專案所包含的環境檔非常多，均包含在.gitignore內。以下列出他們格式：
 
