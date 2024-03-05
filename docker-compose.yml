@@ -1,3 +1,5 @@
+name: canchu
+
 services:
   mysql:
     image: mysql:8
