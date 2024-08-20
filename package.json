@@ -20,7 +20,7 @@
     "ioredis": "^5.3.2",
     "jose": "^4.15.5",
     "multer": "^1.4.5-lts.1",
-    "mysql2": "^3.4.5",
+    "mysql2": "^3.11.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.17",
     "zod": "^3.22.3"
